@@ -21,14 +21,12 @@ class BookController extends \BaseController {
 	 */
 	public function store()
 	{
-		// bruk api'et til kyrre her! og gjør noe sånt:
-		// Book::create(hentDataFraKyrre(Input::get('inputValue')));
+		// lag no feiltesting her
+		// finnes boka fra før?
+		// fant vi ikke info om boka? den sjekken bør være i frontend
 		
-		// Get book data from services@biblionaut
-		// $json = file_get_contents('http://services.biblionaut.net/metadata.php?id=' + Input::get('inputValue'));
-		// $obj = json_decode($json);
-		// dd($obj);
-		
+
+
 		Book::create(array(
 			'dokid' => Input::get('inputValue'),
 			'objektid' => Input::get('inputValue'),
