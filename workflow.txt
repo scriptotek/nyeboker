@@ -1,0 +1,8 @@
+if s_isbn?
+	finn flere isbn
+		https://ask.bibsys.no/ask2/json/result.jsp?cql=bs.isbn=
+else
+	send til getids.php (dit sender jeg knyttid/objektid) for å få objektid. skriv om funksjonen til js
+	så bruker du objektid her: https://ask.bibsys.no/ask2/json/result.jsp?cql=bs.objektid= for å finne isbn-nummerne
+
+finn info fra alle isbn
