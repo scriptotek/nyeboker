@@ -16,7 +16,7 @@
 
 <!-- bøkene =============================================== -->
 <!-- hide books if the loading variable is set to true -->
-<div class="book" ng-hide="loading" ng-repeat="book in books">
+<div class="book" ng-hide="loading" ng-repeat="book in booksFromDatabase">
 	<h3>Book #{{ book.id }} <small>av {{ book.authors }}</h3>
 	<p>{{ book.dokid }}</p>
 

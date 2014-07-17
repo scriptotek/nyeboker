@@ -28,7 +28,6 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script> <!-- load angular -->
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.min.js"></script> <!-- load angular-route -->
-		<script src="js/isbn_tools.js"></script> <!-- load isbn_tools -->
 
 		<!-- ANGULAR -->
 		<script src="js/app.js"></script> <!-- load our application -->
