@@ -131,7 +131,12 @@ bookApp.factory('booksFactory', function($http){
         },
 
         getDatabaseBooks: function(callback) {
-            $http.get('api/books')
+            // version that caches stuff:
+            $http.get({
+                method: 'GET',
+                url: 'api/books',
+                cache: true
+            })
             .success(function(data) {
                 console.log('Success in getDatabaseBooks:');
                 console.log(data);
@@ -141,6 +146,17 @@ bookApp.factory('booksFactory', function($http){
             .error(function(error) {
                 console.log('Error in getDatabaseBooks.');
             });
+
+            // $http.get('api/books')
+            // .success(function(data) {
+            //     console.log('Success in getDatabaseBooks:');
+            //     console.log(data);
+            //     cachedBooks = data;
+            //     callback(data);
+            // })
+            // .error(function(error) {
+            //     console.log('Error in getDatabaseBooks.');
+            // });
         },
 
         // save a book (pass in book data)
