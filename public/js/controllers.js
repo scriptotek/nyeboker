@@ -16,8 +16,8 @@ bookControllers.controller('loadDatabaseBooksCtrl',
         });
     });
 
-bookControllers.controller('newBookCtrl', function ($scope, $location, metaDataApiFactory, isbnToolsFactory) {
-    console.log('--- In newBookController');
+bookControllers.controller('addNewCtrl', function ($scope, $location, metaDataApiFactory, isbnToolsFactory) {
+    console.log('--- In addNewCtrl');
 
     // handle submitting new books
     $scope.lookUpBook = function () {
@@ -58,7 +58,7 @@ bookControllers.controller('newBookCtrl', function ($scope, $location, metaDataA
         $scope.loading = false;
     }
 
-    console.log('--- end of newBookController');
+    console.log('--- end of addNewCtrl');
 });
 
 bookControllers.controller('showJsonDataCtrl', function ($scope, $http, metaDataApiFactory){

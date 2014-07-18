@@ -1,0 +1,8 @@
+<!-- bøkene =============================================== -->
+<!-- hide books if the loading variable is set to true -->
+<div class="book" ng-hide="loading" ng-repeat="book in booksFromDatabase">
+	<h3>Book #{{ book.id }} <small>av {{ book.authors }}</h3>
+	<p>{{ book.dokid }}</p>
+
+	<p><a href="#" ng-click="deleteBook(book.id)" class="text-muted">Delete</a></p>
+</div>

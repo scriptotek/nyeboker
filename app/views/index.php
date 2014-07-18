@@ -27,7 +27,7 @@
 		<!-- JS -->
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular.min.js"></script> <!-- load angular -->
-		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.8/angular-route.min.js"></script> <!-- load angular-route -->
+		<script src="http://cdn.jsdelivr.net/angular.ui-router/0.2.10/angular-ui-router.min.js"></script> <!-- load angular-ui-route -->
 
 		<!-- ANGULAR -->
 		<script src="js/app.js"></script> <!-- load our application -->
@@ -44,8 +44,14 @@
 			<h4>Book Registration System</h4>
 		</div>
 
-		<!-- the different views will be loaded in this div -->
-		<div ng-view></div>
+<!-- 
+		LOADING ICON ===============================================
+		show loading icon if the loading variable is set to true
+		<p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p> -->
+
+		<!-- load our views -->
+		<div ui-view='addNew'></div>
+		<div ui-view='showDatabaseBooks'></div>
 
     </body>
 </html>
