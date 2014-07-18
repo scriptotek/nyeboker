@@ -1,6 +1,6 @@
 var bookControllers = angular.module('bookControllers', []);
 
-bookControllers.controller('loadDatabaseBooksCtrl',
+bookControllers.controller('showDatabaseBooksCtrl',
     function ($scope, databaseFactory){
 
         // show loading icon
