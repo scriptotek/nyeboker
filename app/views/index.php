@@ -42,16 +42,13 @@
 		<div class="page-header">
 			<h2>Laravel and Angular</h2>
 			<h4>Book Registration System</h4>
+			<a ui-sref="index">Home</a> - 
+			<a ui-sref="addNew">Add New Book</a> - 
+			<a ui-sref="showDatabaseBooks">Show stored books</a>
 		</div>
 
-<!-- 
-		LOADING ICON ===============================================
-		show loading icon if the loading variable is set to true
-		<p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p> -->
-
 		<!-- load our views -->
-		<div ui-view='addNew'></div>
-		<div ui-view='showDatabaseBooks'></div>
+		<div ui-view></div>
 
     </body>
 </html>

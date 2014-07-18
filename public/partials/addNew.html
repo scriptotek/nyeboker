@@ -1,13 +1,14 @@
-<div>
-	<form ng-submit="lookUpBook()">
+<div ui-view="findJson">
+	<form name="lookUpBookForm" ng-submit="lookUpBook(lookUpBookForm)">
 		<!-- -BOOK ID -->
 		<div class="form-group">
-			<input type="text"class="form-control input-lg" name="inputValue" ng-model="inputValue" placeholder="Write isbn/dokid/objectid here">
+
+			<input type="text" class="form-control input-lg" name="inputValue" ng-model="addNew.inputValue" placeholder="Write isbn/dokid/objectid here" required ng-minlength=9>
 		</div>
 
 		<!-- SUBMIT BUTTON -->
 		<div class="form-group text-right">
-			<button type="submit" class="btn btn-primary btn-lg">Submit</button>
+			<button class="btn btn-primary btn-lg">Submit</button>
 		</div>
 	</form>
 </div>

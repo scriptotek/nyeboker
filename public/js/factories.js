@@ -1,7 +1,7 @@
 var bookFactories = angular.module('bookFactories', []);
 
 // collection of functions that operate on isbn numbers
-bookFactories.factory('isbnToolsFactory', function() {
+bookFactories.factory('isbnToolsFactory', function($http) {
     return {
         /*
          * Converts a isbn10 number into a isbn13.
@@ -65,12 +65,44 @@ bookFactories.factory('isbnToolsFactory', function() {
             var stripped = isbn.toUpperCase().replace(/[\-X]/g, '');
             if (stripped.length == 10 || stripped.length == 13) return true;
             return false;
+        },
+
+        /*
+         * If you're not sure whether the input you've gotten is objectid or
+         * docid, this function will return objectid if either objectid/docid
+         * is the input.
+         */
+        findObjectId: function(inputValue, callback) {
+            return $http.get('http://services.biblionaut.net/getids.php?id=' + inputValue)
+            .success(function(data) {
+                console.log('Got result from isbnToolsFactory.findObjectId:');
+                console.log(data);
+                callback(data);
+            })
+            .error(function(error) {
+                console.log('Error in isbnToolsFactory.findObjectId');
+            });
+        },
+
+        /*
+         * Will use an objectid to find isbn numbers.
+         */
+        findISBNs: function(inputValue, callback) {
+            return $http.get('http://services.biblionaut.net/sru_iteminfo.php?id=' + inputValue)
+            .success(function(data) {
+                console.log('Got result from isbnToolsFactory.findISBNs:');
+                console.log(data);
+                callback(data);
+            })
+            .error(function(error) {
+                console.log('Error in isbnToolsFactory.findISBNs');
+            });
         }
     }
 });
 
 // functions that deal with our local database
-bookFactories.factory('databaseFactory', function($http) {
+bookFactories.factory('databaseFactory', function($http, $timeout) {
     
     var cachedDatabaseBooks;
     
@@ -118,14 +150,18 @@ bookFactories.factory('metaDataApiFactory', function($http) {
 
     return {
 
+        lookUpBook: function(inputValue, callback) {
+            console.log('--- in lookUpBook in metaDataApiFactory');
+        },
+
         getCachedJson: function() {
             return cachedJson;
         },
 
-        getApiJson: function(isbns, callback) {
+        getApiJson: function(isbnArray, callback) {
             // since we're getting an array of isbns here, join them separated
             // by commas since that's the format the metadata api takes
-            var isbnsCommaSeparated = isbns.join(',');
+            var isbnsCommaSeparated = isbnArray.join(',');
 
             // json from api
             $http.get('http://services.biblionaut.net/metadata/nielsen.php?id=' + isbnsCommaSeparated)

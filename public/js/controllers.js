@@ -1,7 +1,7 @@
 var bookControllers = angular.module('bookControllers', []);
 
 bookControllers.controller('showDatabaseBooksCtrl',
-    function ($scope, databaseFactory){
+    function ($scope, $rootScope, databaseFactory){
 
         // show loading icon
         $scope.loading = true;
@@ -16,67 +16,86 @@ bookControllers.controller('showDatabaseBooksCtrl',
         });
     });
 
-bookControllers.controller('addNewCtrl', function ($scope, $location, metaDataApiFactory, isbnToolsFactory) {
-    console.log('--- In addNewCtrl');
+bookControllers.controller('addNewCtrl', function ($scope, $state, metaDataApiFactory, isbnToolsFactory) {
 
-    // handle submitting new books
-    $scope.lookUpBook = function () {
-        // for debugging, set inputValue to a valid ISBN number
-        $scope.inputValue = '0-19-852663-6';
+    // handle finding new books
+    $scope.lookUpBook = function (theform) {
+        console.log('test');
+        console.log($scope.lookUpBookForm);
+        console.log(theform);
 
-        // show loading icon
-        $scope.loading = true;
+        // get input value
+        var inputValue = $scope.inputValue;
+        
+        /*
+         * Set testing values for input so that you don't have to type in a
+         * valid isbn/objectid/knyttid every time
+         */
+        // inputValue = '0-19-852663-6';
+        // inputValue = '036051NA0';
 
-        // will hold isbn numbers
-        var isbns = [];
+        /*
+         * The possibilities now:
+         * 
+         * 1) input is valid isbn:
+         *    we send it straight to metaDataApiFactory.getApiJson
+         * 
+         * 2) input.length == 9 and assumed to be docid/objectid
+         *    we have to find isbn number(s) connected. since we're not sure
+         *    what we have we use isbnToolsFactory.findObjectId to get the
+         *    objectid. Then we can use isbnToolsFactory.findISBNs to find
+         *    isbn numbers connected. Then we can use
+         *    metaDataApiFactory.getApiJson
+         * 
+         *  3) invalid input. show error somewhere
+        */
 
-        // check if we've got an isbn number
-        if (isbnToolsFactory.isISBN($scope.inputValue)) {
-            console.log('Input is ISBN. Can proceed.');
-            isbns.push(isbnToolsFactory.stripISBN($scope.inputValue));
-        } else {
-            console.log('Input is not ISBN. Need to find ISBN number(s).');
-        }
+        if (isbnToolsFactory.isISBN(inputValue)) {
 
-        console.log('array isbns looks like:')
-        console.log(isbns)
+            console.log('Input is ISBN.');
 
-        // at this point we have a list of isbn number(s)
-
-        // get json data for these isbn numbers
-        metaDataApiFactory.getApiJson(
-            isbns,
-            function(data) {
-                // the data is stored in the factory, so no need to do anything
-                // with it here. we'll just inject the factory in the next view
-                
-                // move to other view
-                $location.path('/showJsonData');
+            metaDataApiFactory.getApiJson([inputValue], function(data) {
+                console.log('We started with an isbn number and ended in book info. YAY!');
+                $state.go('showJsonData');
             });
 
-        // hide loading icon
-        $scope.loading = false;
+        } else if (inputValue.length === 9) {
+
+            console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
+            isbnToolsFactory.findObjectId(inputValue, function(objektidData) {
+                // now try to find isbn numbers connected
+                isbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
+
+                    metaDataApiFactory.getApiJson(isbnData.isbn, function(data) {
+                        console.log('We started with doc/obj/knytt-id and ended in book info. YAY!');
+                        $state.go('showJsonData');
+                    });
+
+                });
+            });
+
+        } else {
+            console.log('Invalid input.');
+        }
     }
 
-    console.log('--- end of addNewCtrl');
 });
 
-bookControllers.controller('showJsonDataCtrl', function ($scope, $http, metaDataApiFactory){
+bookControllers.controller('showJsonDataCtrl', function ($scope){
     console.log('--- In showJsonDataCtrl');
 
     var cachedJson = metaDataApiFactory.getCachedJson();
 
-    console.log(cachedJson);
+    // console.log(cachedJson);
 
-    // did we find multiple results?
-    // var count = Object.keys($scope.foundJsonData).length;
-    // if (count > 1) {
-    //     console.log('We found several isbn numbers for this book.');
-    //     console.log('The data we found was:');
-    //     console.log($scope.foundJsonData);
-    // } else {
-    //     console.log('We found only one isbn number matching.');
-    // }
+    // go through results
+    angular.forEach(cachedJson, function(value, key) {
+        if (key != 'source') {
+            console.log(value);
+        } else {
+            console.log('found key source');
+        }
+    });
     
     console.log('--- end of showJsonDataCtrl');
 });

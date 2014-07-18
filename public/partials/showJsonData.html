@@ -1,6 +1,7 @@
-<!--if there are several books found for the given id, the user can
-select which one to use in this box -->
-<div class="bookSelector" ng-show="showSelector" ng-repeat="book in foundJsonData">
-	<!-- show info about the multiple books found -->
-	<p>{{ book.dokid }}</p>
+<div ui-view="jsonResults" ng-repeat="book in foundJsonData">
+	<p>{{ book.isbn }}</p>
+	<p>{{ book.short_desc }}</p>
 </div>
+
+<!-- show loading spinner if we're still fetching data -->
+<loadingspinner></loadingspinner>
