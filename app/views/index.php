@@ -31,6 +31,8 @@
 
 		<!-- ANGULAR -->
 		<script src="js/app.js"></script> <!-- load our application -->
+		<script src="js/controllers.js"></script> <!-- load our controllers -->
+		<script src="js/factories.js"></script> <!-- load our factories -->
 
     </head>
 
