@@ -1,13 +1,13 @@
 <div ui-view="findJson">
 
-	<form name="addNewForm" ng-submit="lookUpBook(addNewForm.inputValue)" ng-disabled="addNewForm.$invalid">
+	<form name="addNewForm" ng-submit="lookUpBook(addNewForm.inputValue)" ng-disabled="addNewForm.$invalid" novalidation>
 
 		<!-- -BOOK ID -->
 		<div class="form-group">
-			<input type="text" name="inputValue" class="form-control input-lg" ng-model="inputValue" placeholder="Write isbn/dokid/objectid here" required ng-minlength=9>
+			<input type="text" name="inputValue" class="form-control input-lg" ng-model="inputValue" placeholder="Write isbn/dokid/objectid here" ng-required="true" ng-minlength=9 ng-trim="true">
 			<br>
 			<span ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.required">Required!</span>
-			<span ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.minlength">Valid input is ISBN/docid/objectid. Minimum 9 characters.</span>
+			<span ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.minlength">You need to enter a valid ISBN/docid/objectid number.</span>
 		</div>
 
 		<!-- SUBMIT BUTTON -->
