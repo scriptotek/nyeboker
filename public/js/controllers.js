@@ -18,14 +18,19 @@ bookControllers.controller('showDatabaseBooksCtrl',
 
 bookControllers.controller('addNewCtrl', function ($scope, $state, metaDataApiFactory, isbnToolsFactory) {
 
+    $scope.inputValue = null;
+
     // handle finding new books
-    $scope.lookUpBook = function (theform) {
+    $scope.lookUpBook = function (inputValue) {
+
+        $scope.loading = true;
+
         console.log('test');
-        console.log($scope.lookUpBookForm);
-        console.log(theform);
+        console.log(inputValue.$viewValue);
 
         // get input value
-        var inputValue = $scope.inputValue;
+        var inputValue = inputValue.$viewValue;
+        // var inputValue;
         
         /*
          * Set testing values for input so that you don't have to type in a
@@ -75,13 +80,18 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, metaDataApiFa
             });
 
         } else {
+
+            $scope.loading = false;
             console.log('Invalid input.');
+            $scope.error = 'Invalid input.';
+
         }
     }
 
 });
 
-bookControllers.controller('showJsonDataCtrl', function ($scope){
+bookControllers.controller('showJsonDataCtrl', function ($scope, metaDataApiFactory){
+
     console.log('--- In showJsonDataCtrl');
 
     var cachedJson = metaDataApiFactory.getCachedJson();

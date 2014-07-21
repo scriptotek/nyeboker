@@ -1,14 +1,26 @@
 <div ui-view="findJson">
-	<form name="lookUpBookForm" ng-submit="lookUpBook(lookUpBookForm)">
+
+	<form name="addNewForm" ng-submit="lookUpBook(addNewForm.inputValue)" ng-disabled="addNewForm.$invalid">
+
 		<!-- -BOOK ID -->
 		<div class="form-group">
-
-			<input type="text" class="form-control input-lg" name="inputValue" ng-model="addNew.inputValue" placeholder="Write isbn/dokid/objectid here" required ng-minlength=9>
+			<input type="text" name="inputValue" class="form-control input-lg" ng-model="inputValue" placeholder="Write isbn/dokid/objectid here" required ng-minlength=9>
+			<br>
+			<span ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.required">Required!</span>
+			<span ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.minlength">Valid input is ISBN/docid/objectid. Minimum 9 characters.</span>
 		</div>
 
 		<!-- SUBMIT BUTTON -->
 		<div class="form-group text-right">
-			<button class="btn btn-primary btn-lg">Submit</button>
+			<button class="btn btn-primary btn-lg" ng-disabled="addNewForm.$invalid">Submit</button>
 		</div>
+
 	</form>
+
+	<!-- show loading spinner if we're still fetching data -->
+	<loadingspinner></loadingspinner>
+
+	<!-- show error if something went wrong -->
+	<errormessage></errormessage>
+
 </div>

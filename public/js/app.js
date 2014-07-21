@@ -36,6 +36,13 @@ bookApp.directive("loadingspinner", function() {
     }
 });
 
+bookApp.directive("errormessage", function() {
+    return {
+        restrict: 'E',
+        template: '<div class="alert alert-danger" ng-show="error">{{error}}</div>'
+    }
+});
+
 /*
 STUFF TO DO:
 
@@ -58,5 +65,8 @@ else
 
 finn info fra alle isbn
 -----
+rewrite functions so that dependencies work when minified
+-----
+
 
 */
