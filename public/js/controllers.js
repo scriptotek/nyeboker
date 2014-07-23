@@ -25,74 +25,82 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
         $scope.loading = true;
 
+        // check if form is valid
         if ($scope.addNewForm.$valid) {
-            console.log('validation passed');
-        } else {
+
+            console.log('form validation passed');
+
+            // get input value
+            var inputValue = $scope.inputValue;
             
-            // hide loading icon
-            $scope.loading = false;
+            /*
+             * Set testing values for input so that you don't have to type in a
+             * valid isbn/objectid/knyttid every time
+             */
+            inputValue = '0-19-852663-6';
+            // inputValue = '036051NA0';
 
-        }
+            /*
+             * The possibilities now:
+             * 
+             * 1) input is valid isbn:
+             *    we send it straight to MetaDataApiFactory.getApiJson
+             * 
+             * 2) input.length == 9 and assumed to be docid/objectid
+             *    we have to find isbn number(s) connected. since we're not sure
+             *    what we have we use IsbnToolsFactory.findObjectId to get the
+             *    objectid. Then we can use IsbnToolsFactory.findISBNs to find
+             *    isbn numbers connected. Then we can use
+             *    MetaDataApiFactory.getApiJson
+             * 
+             *  3) invalid input. show error somewhere
+            */
 
-        console.log('test');
-        console.log($scope.inputValue);
+            if (IsbnToolsFactory.isISBN(inputValue)) {
 
-        // get input value
-        var inputValue = inputValue.$viewValue;
-        // var inputValue;
-        
-        /*
-         * Set testing values for input so that you don't have to type in a
-         * valid isbn/objectid/knyttid every time
-         */
-        // inputValue = '0-19-852663-6';
-        // inputValue = '036051NA0';
+                console.log('Input is ISBN.');
 
-        /*
-         * The possibilities now:
-         * 
-         * 1) input is valid isbn:
-         *    we send it straight to MetaDataApiFactory.getApiJson
-         * 
-         * 2) input.length == 9 and assumed to be docid/objectid
-         *    we have to find isbn number(s) connected. since we're not sure
-         *    what we have we use IsbnToolsFactory.findObjectId to get the
-         *    objectid. Then we can use IsbnToolsFactory.findISBNs to find
-         *    isbn numbers connected. Then we can use
-         *    MetaDataApiFactory.getApiJson
-         * 
-         *  3) invalid input. show error somewhere
-        */
+                MetaDataApiFactory.getApiJson([inputValue], function(data) {
 
-        if (IsbnToolsFactory.isISBN(inputValue)) {
+                    console.log('We started with an isbn number and ended in book info. YAY!');
 
-            console.log('Input is ISBN.');
-
-            MetaDataApiFactory.getApiJson([inputValue], function(data) {
-                console.log('We started with an isbn number and ended in book info. YAY!');
-                $state.go('showJsonData');
-            });
-
-        } else if (inputValue.length === 9) {
-
-            console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
-            IsbnToolsFactory.findObjectId(inputValue, function(objektidData) {
-                // now try to find isbn numbers connected
-                IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
-
-                    MetaDataApiFactory.getApiJson(isbnData.isbn, function(data) {
-                        console.log('We started with doc/obj/knytt-id and ended in book info. YAY!');
-                        $state.go('showJsonData');
-                    });
+                    $state.go('showJsonData');
 
                 });
-            });
+
+            } else if (inputValue.length === 9) {
+
+                console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
+
+                IsbnToolsFactory.findObjectId(inputValue, function(objektidData) {
+
+                    // now try to find isbn numbers connected
+                    IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
+
+                        MetaDataApiFactory.getApiJson(isbnData.isbn, function(data) {
+
+                            console.log('We started with doc/obj/knytt-id and ended in book info. YAY!');
+
+                            $state.go('showJsonData');
+
+                        });
+
+                    });
+                });
+
+            } else {
+
+                $scope.loading = false;
+                console.log('Invalid input.');
+                $scope.error = 'Invalid input.';
+
+            }
 
         } else {
 
             $scope.loading = false;
-            console.log('Invalid input.');
-            $scope.error = 'Invalid input.';
+            console.log('Form not valid.');
+            $scope.error = 'Form not valid.';
 
         }
     }
