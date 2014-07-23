@@ -102,7 +102,7 @@ bookFactories.factory('IsbnToolsFactory', function($http) {
 });
 
 // functions that deal with our local database
-bookFactories.factory('DatabaseFactory', function($http, $timeout) {
+bookFactories.factory('DatabaseFactory', function($http) {
     
     var cachedDatabaseBooks;
     
@@ -143,49 +143,127 @@ bookFactories.factory('DatabaseFactory', function($http, $timeout) {
     }
 });
 
-// functions that deal with the metadata api
-bookFactories.factory('MetaDataApiFactory', function($http) {
-    
-    var cachedJson;
+// factory to store search results
+bookFactories.factory('ApiResultsFactory', function() {
+
+    // here'll we'll add data as we fetch it
+    var cachedJson = {
+        isbn: [],
+        short_desc: [],
+        long_desc: [],
+        small_image: [],
+        medium_image: [],
+        large_image: [],
+        url: [],
+        authors: [],
+        title: [],
+        subtitle: []
+    };
 
     return {
 
-        lookUpBook: function(inputValue, callback) {
-            console.log('--- in lookUpBook in metaDataApiFactory');
+        // this will receive data from the different APIs and store the data
+        // for us. The expected format is:
+        /*
+            {
+                url: "https://www.googleapis.com/books/v1/volumes?q=9780198566762",
+                isbn: "9780198566762",
+                long_desc: "Sethna distills the core ideas of statistical mechanics to make room for new advances important to information theory, complexity, and modern biology. He explores everything from chaos through to life at the end of the universe.",
+                short_desc: "Sethna distills the core ideas of statistical mechanics to make room for new advances important to information theory, complexity, and modern biology. He explores everything from chaos through to life at the end of the universe.",
+                small_image: "http://bks5.books.google.co.uk/books?id=m_LSngEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+                medium_image: "http://bks5.books.google.co.uk/books?id=m_LSngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+            }
+        */
+        addResult: function(object) {
+
+            // get keys
+            var keys = Object.keys(object);
+
+            // add results to our storage
+            angular.forEach(keys, function(key) {
+                if (typeof cachedJson[key] === 'undefined') {
+
+                    // if the API had started returning a resource we don't
+                    // know about, log the resource name
+                    console.log(key);
+
+                } else {
+
+                    // otherwise we want to store this piece of data if we
+                    // haven't already go it
+                    if (object[key] && cachedJson[key].indexOf(object[key]) === -1) {
+                        cachedJson[key].push(object[key]);
+                    }
+
+                }
+            });
+
+            console.log(cachedJson);
+
         },
 
-        getCachedJson: function() {
+        getData: function() {
             return cachedJson;
-        },
+        }
 
-        getApiJson: function(isbnArray, callback) {
+    }
+
+});
+
+// functions that deal with the metadata api
+bookFactories.factory('MetaDataApiFactory', function($http, ApiResultsFactory) {
+
+    // apis to fetch data from
+    var urls = [
+        'http://services.biblionaut.net/metadata/bibsys.php?id=',
+        'http://services.biblionaut.net/metadata/nielsen.php?id=',
+        'http://services.biblionaut.net/metadata/google.php?id=',
+        'http://services.biblionaut.net/metadata/openlibrary.php?id=',
+        'http://services.biblionaut.net/metadata/isbndb.php?id=',
+        'http://services.biblionaut.net/metadata/librarything.php?id=',
+        'http://services.biblionaut.net/metadata/springer.php?id='
+    ];
+
+    // old holdervariable for when I only used one api:
+    // var cachedJson;
+
+    return {
+
+        getApiJson: function(isbnArray) {
+
             // since we're getting an array of isbns here, join them separated
-            // by commas since that's the format the metadata api takes
+            // by commas since that's the format the metadata apis takes
             var isbnsCommaSeparated = isbnArray.join(',');
 
-            // json from api
-            $http.get('http://services.biblionaut.net/metadata/nielsen.php?id=' + isbnsCommaSeparated)
-            .success(function(data) {
-                console.log('Success in getApiJson:');
-                console.log(data);
-                cachedJson = data;
-                callback(data);
-            })
-            .error(function() {
-                console.log('Error in getApiJson.');
+            // fetch data from all urls
+            angular.forEach(urls, function(url) {
+
+                $http.get(url + isbnsCommaSeparated)
+                .success(function(data) {
+
+                    // go though all data and store
+                    angular.forEach(data, function(res) {
+
+                        // now we have to check if we got a result. if we
+                        // didn't then the object would have an error
+                        // property with value 404. we make sure it doesn't
+                        // have that, and that it is an object
+                        if (typeof res === 'object' && res.error != '404') {
+
+                            console.log('success from resource: ' + url + isbnsCommaSeparated);
+
+                            // send result to storage
+                            ApiResultsFactory.addResult(res);
+
+                        }
+                    });
+                })
+                .error(function() {
+                    console.log('Unable to fetch from: ' + url);
+                });
+
             });
-            
-            // json from test file
-            // $http.get('test.json')
-            // .success(function(data) {
-            //     console.log('Success in getApiJson:');
-            //     console.log(data);
-            //     cachedJson = data;
-            //     callback(data);
-            // })
-            // .error(function(error) {
-            //     console.log('Error in getApiJson.');
-            // });
+
         }
 
     };

@@ -60,13 +60,14 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
                 console.log('Input is ISBN.');
 
-                MetaDataApiFactory.getApiJson([inputValue], function(data) {
+                // this will call all APIs set in the variable urls in
+                // MetaDataApiFactory:
+                MetaDataApiFactory.getApiJson([inputValue]);
 
-                    console.log('We started with an isbn number and ended in book info. YAY!');
-
-                    $state.go('showJsonData');
-
-                });
+                // the calls to the APIs are not done yet, but we will
+                // move to the results page and add results to the view
+                // as they come
+                $state.go('showJsonData');
 
             } else if (inputValue.length === 9) {
 
@@ -77,13 +78,14 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
                     // now try to find isbn numbers connected
                     IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
 
-                        MetaDataApiFactory.getApiJson(isbnData.isbn, function(data) {
+                        // this will call all APIs set in the variable urls in
+                        // MetaDataApiFactory:
+                        MetaDataApiFactory.getApiJson(isbnData.isbn);
 
-                            console.log('We started with doc/obj/knytt-id and ended in book info. YAY!');
-
-                            $state.go('showJsonData');
-
-                        });
+                        // the calls to the APIs are not done yet, but we will
+                        // move to the results page and add results to the view
+                        // as they come
+                        $state.go('showJsonData');
 
                     });
                 });
@@ -107,22 +109,13 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
 });
 
-bookControllers.controller('showJsonDataCtrl', function ($scope, MetaDataApiFactory){
+bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
 
     console.log('--- In showJsonDataCtrl');
 
-    var cachedJson = MetaDataApiFactory.getCachedJson();
+    var cachedJson = ApiResultsFactory.getData();
 
-    // console.log(cachedJson);
-
-    // go through results
-    angular.forEach(cachedJson, function(value, key) {
-        if (key != 'source') {
-            console.log(value);
-        } else {
-            console.log('found key source');
-        }
-    });
+    console.log(cachedJson);
     
     console.log('--- end of showJsonDataCtrl');
 });
