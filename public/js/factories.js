@@ -1,7 +1,7 @@
 var bookFactories = angular.module('bookFactories', []);
 
 // collection of functions that operate on isbn numbers
-bookFactories.factory('isbnToolsFactory', function($http) {
+bookFactories.factory('IsbnToolsFactory', function($http) {
     return {
         /*
          * Converts a isbn10 number into a isbn13.
@@ -102,7 +102,7 @@ bookFactories.factory('isbnToolsFactory', function($http) {
 });
 
 // functions that deal with our local database
-bookFactories.factory('databaseFactory', function($http, $timeout) {
+bookFactories.factory('DatabaseFactory', function($http, $timeout) {
     
     var cachedDatabaseBooks;
     
@@ -144,7 +144,7 @@ bookFactories.factory('databaseFactory', function($http, $timeout) {
 });
 
 // functions that deal with the metadata api
-bookFactories.factory('metaDataApiFactory', function($http) {
+bookFactories.factory('MetaDataApiFactory', function($http) {
     
     var cachedJson;
 
