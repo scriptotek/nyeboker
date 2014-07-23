@@ -22,10 +22,6 @@
 			.book {
 				padding-bottom:20px;
 			}
-
-			input.ng-invalid.ng-dirty {
-				border: 1px solid red;
-			}
 		</style>
 
 		<!-- JS -->

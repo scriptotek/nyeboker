@@ -18,15 +18,24 @@ bookControllers.controller('showDatabaseBooksCtrl',
 
 bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFactory, IsbnToolsFactory) {
 
-    $scope.inputValue = null;
+    $scope.inputValue = 42;
 
     // handle finding new books
-    $scope.lookUpBook = function (inputValue) {
+    $scope.lookUpBook = function () {
 
         $scope.loading = true;
 
+        if ($scope.addNewForm.$valid) {
+            console.log('validation passed');
+        } else {
+            
+            // hide loading icon
+            $scope.loading = false;
+
+        }
+
         console.log('test');
-        console.log(inputValue.$viewValue);
+        console.log($scope.inputValue);
 
         // get input value
         var inputValue = inputValue.$viewValue;

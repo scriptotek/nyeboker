@@ -1,26 +1,48 @@
-<div ui-view="findJson">
+<form
+	name="addNewForm"
+	ng-submit="lookUpBook()"
+	novalidate>
 
-	<form name="addNewForm" ng-submit="lookUpBook(addNewForm.inputValue)" ng-disabled="addNewForm.$invalid" novalidation>
+	<!-- -BOOK ID -->
+	<div
+		class="form-group"
+		ng-class="{
+			'has-error' : addNewForm.inputValue.$invalid && addNewForm.inputValue.$dirty,
+			'has-success': addNewForm.inputValue.$valid && addNewForm.inputValue.$dirty
+		}">
 
-		<!-- -BOOK ID -->
-		<div class="form-group">
-			<input type="text" name="inputValue" class="form-control input-lg" ng-model="inputValue" placeholder="Write isbn/dokid/objectid here" ng-required="true" ng-minlength=9 ng-trim="true">
-			<br>
-			<span ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.required">Required!</span>
-			<span ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.minlength">You need to enter a valid ISBN/docid/objectid number.</span>
-		</div>
+		<input
+			type="text"
+			name="inputValue"
+			class="form-control input-lg"
+			ng-model="inputmodel.inputValue"
+			placeholder="Write isbn/dokid/objectid here"
+			ng-required="true"
+			ng-minlength=9
+			ng-trim="true"
+			cu-focus>
+		
+		<br>
+		
+		<span
+			ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.minlength && !addNewForm.inputValue.$focused">
+			You need to enter a valid ISBN/docid/objectid number.
+		</span>
+	</div>
 
-		<!-- SUBMIT BUTTON -->
-		<div class="form-group text-right">
-			<button class="btn btn-primary btn-lg" ng-disabled="addNewForm.$invalid">Submit</button>
-		</div>
+	<!-- SUBMIT BUTTON -->
+	<div class="form-group text-right">
+		<button
+			class="btn btn-primary btn-lg"
+			ng-disabled="addNewForm.$invalid">
+			Submit
+		</button>
+	</div>
 
-	</form>
+</form>
 
-	<!-- show loading spinner if we're still fetching data -->
-	<loadingspinner></loadingspinner>
+<!-- show loading spinner if we're still fetching data -->
+<loadingspinner></loadingspinner>
 
-	<!-- show error if something went wrong -->
-	<errormessage></errormessage>
-
-</div>
+<!-- show error if something went wrong -->
+<errormessage></errormessage>

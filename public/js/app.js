@@ -43,6 +43,29 @@ bookApp.directive("errormessage", function() {
     }
 });
 
+// directive used to determine whether an input field has focus. Then we can
+// hide error messages until the field loses focus
+bookApp.directive('cuFocus', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, element, attrs, controller) {
+            controller.$focused = false;
+            element
+                .bind('focus', function(e) {
+                    scope.$apply(function() {
+                        controller.$focused = true;
+                    });
+                })
+                .bind('blur', function(e) {
+                    scope.$apply(function() {
+                        controller.$focused = false;
+                    });
+                });
+        }
+    }
+});
+
 /*
 STUFF TO DO:
 
