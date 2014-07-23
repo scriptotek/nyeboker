@@ -22,6 +22,10 @@
 			.book {
 				padding-bottom:20px;
 			}
+
+			.imgSize {
+				max-width: 100px;
+			}
 		</style>
 
 		<!-- JS -->
@@ -44,7 +48,8 @@
 			<h4>Book Registration System</h4>
 			<a ui-sref="index">Home</a> - 
 			<a ui-sref="addNew">Add New Book</a> - 
-			<a ui-sref="showDatabaseBooks">Show stored books</a>
+			<a ui-sref="showDatabaseBooks">Show stored books</a> - 
+			<a ui-sref="showJsonData">Show search results</a>
 		</div>
 
 		<!-- load our views -->

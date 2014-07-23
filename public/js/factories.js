@@ -198,13 +198,13 @@ bookFactories.factory('ApiResultsFactory', function() {
                 }
             });
 
-            console.log(cachedJson);
+            // console.log(cachedJson);
 
         },
 
-        getData: function() {
-            return cachedJson;
-        }
+        // this will be used to fetch data and have it update the view
+        // automatically
+        cachedJsons: cachedJson
 
     }
 
@@ -250,7 +250,7 @@ bookFactories.factory('MetaDataApiFactory', function($http, ApiResultsFactory) {
                         // have that, and that it is an object
                         if (typeof res === 'object' && res.error != '404') {
 
-                            console.log('success from resource: ' + url + isbnsCommaSeparated);
+                            // console.log('success from resource: ' + url + isbnsCommaSeparated);
 
                             // send result to storage
                             ApiResultsFactory.addResult(res);

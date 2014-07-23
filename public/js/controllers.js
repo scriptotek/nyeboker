@@ -25,6 +25,21 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
         $scope.loading = true;
 
+        // will be used when we're ready to fetch results. is it's own function
+        // to avoid duplicate code
+        var movingOn = function(isbns) {
+
+            // this will call all APIs set in the variable urls in
+            // MetaDataApiFactory:
+            MetaDataApiFactory.getApiJson(isbns);
+
+            // the calls to the APIs are not done yet, but we will
+            // move to the results page and add results to the view
+            // as they come
+            $state.go('showJsonData');
+
+        }
+
         // check if form is valid
         if ($scope.addNewForm.$valid) {
 
@@ -44,14 +59,15 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
              * The possibilities now:
              * 
              * 1) input is valid isbn:
-             *    we send it straight to MetaDataApiFactory.getApiJson
+             *    we send it straight to movingOn with the isbn number
              * 
              * 2) input.length == 9 and assumed to be docid/objectid
-             *    we have to find isbn number(s) connected. since we're not sure
-             *    what we have we use IsbnToolsFactory.findObjectId to get the
-             *    objectid. Then we can use IsbnToolsFactory.findISBNs to find
-             *    isbn numbers connected. Then we can use
-             *    MetaDataApiFactory.getApiJson
+             *    we have to find isbn number(s) connected. since we're not
+             *    sure whether we have objectid or docid at this point, we'll
+             *    use IsbnToolsFactory.findObjectId to get the objectid. Then
+             *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
+             *    connected. Then we can use movingOn with the isbn numbers
+             *    we found
              * 
              *  3) invalid input. show error somewhere
             */
@@ -59,15 +75,7 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
             if (IsbnToolsFactory.isISBN(inputValue)) {
 
                 console.log('Input is ISBN.');
-
-                // this will call all APIs set in the variable urls in
-                // MetaDataApiFactory:
-                MetaDataApiFactory.getApiJson([inputValue]);
-
-                // the calls to the APIs are not done yet, but we will
-                // move to the results page and add results to the view
-                // as they come
-                $state.go('showJsonData');
+                movingOn([inputValue]);
 
             } else if (inputValue.length === 9) {
 
@@ -78,14 +86,7 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
                     // now try to find isbn numbers connected
                     IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
 
-                        // this will call all APIs set in the variable urls in
-                        // MetaDataApiFactory:
-                        MetaDataApiFactory.getApiJson(isbnData.isbn);
-
-                        // the calls to the APIs are not done yet, but we will
-                        // move to the results page and add results to the view
-                        // as they come
-                        $state.go('showJsonData');
+                        movingOn(isbnData.isbn);
 
                     });
                 });
@@ -109,13 +110,8 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
 });
 
-bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
+bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory, $timeout){
 
-    console.log('--- In showJsonDataCtrl');
+    $scope.cachedJson = ApiResultsFactory.cachedJsons;
 
-    var cachedJson = ApiResultsFactory.getData();
-
-    console.log(cachedJson);
-    
-    console.log('--- end of showJsonDataCtrl');
 });
