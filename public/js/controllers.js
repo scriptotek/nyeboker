@@ -18,8 +18,6 @@ bookControllers.controller('showDatabaseBooksCtrl',
 
 bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFactory, IsbnToolsFactory) {
 
-    $scope.inputValue = 42;
-
     // handle finding new books
     $scope.lookUpBook = function () {
 
@@ -110,7 +108,7 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
 });
 
-bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory, $timeout){
+bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
 
     $scope.cachedJson = ApiResultsFactory.cachedJsons;
 
