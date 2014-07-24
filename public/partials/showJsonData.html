@@ -1,55 +1,66 @@
 <div>
 
 	<div>
+		<p>If you've <a ui-sref="addNew">made a search</a> then the results will appear below. It might take a couple of seconds.</p>
+	</div>
+
+	<div>
 		<h3>ISBNs</h3>
 		<ul>
-			<li ng-repeat="isbn in cachedJson.isbn">{{ isbn }}</li>
+			<li ng-repeat="isbn in cachedJson.isbn" ng-show="cachedJson.isbn">{{ isbn }}</li>
+			<li ng-show="!cachedJson.isbn.length"><small>(none found)</small></li>
 		</ul>
 	</div>
 
 	<div>
 		<h3>Title</h3>
 		<ul>
-			<li ng-repeat="title in cachedJson.title">{{ title }}</li>
+			<li ng-repeat="title in cachedJson.title" ng-show="cachedJson.title">{{ title }}</li>
+			<li ng-show="!cachedJson.title.length"><small>(none found)</small></li>
 		</ul>
 	</div>
 
 	<div>
 		<h3>Subtitle</h3>
 		<ul>
-			<li ng-repeat="subtitle in cachedJson.subtitle">{{ subtitle }}</li>
+			<li ng-repeat="subtitle in cachedJson.subtitle" ng-show="cachedJson.subtitle">{{ subtitle }}</li>
+			<li ng-show="!cachedJson.subtitle.length"><small>(none found)</small></li>
 		</ul>
 	</div>
 
 	<div>
 		<h3>Authors</h3>
 		<ul>
-			<li ng-repeat="author in cachedJson.authors">{{ author }}</li>
+			<li ng-repeat="author in cachedJson.authors" ng-show="cachedJson.authors">{{ author }}</li>
+			<li ng-show="!cachedJson.authors.length"><small>(none found)</small></li>
 		</ul>
 	</div>
 
 	<div>
 		<h3>Short Description</h3>
 		<ul>
-			<li ng-repeat="desc in cachedJson.short_desc">{{ desc }}</li>
+			<li ng-repeat="desc in cachedJson.short_desc" ng-show="cachedJson.short_desc">{{ desc }}</li>
+			<li ng-show="!cachedJson.short_desc.length"><small>(none found)</small></li>
 		</ul>
 	</div>
 
 	<div>
 		<h3>Long Description</h3>
 		<ul>
-			<li ng-repeat="desc in cachedJson.long_desc">{{ desc }}</li>
+			<li ng-repeat="desc in cachedJson.long_desc" ng-show="cachedJson.long_desc">{{ desc }}</li>
+			<li ng-show="!cachedJson.long_desc.length"><small>(none found)</small></li>
 		</ul>
 	</div>
 
 	<div style="display:block;">
 		<h3>Small images:</h3>
 		<ul>
-			<li ng-repeat="img in cachedJson.small_image">
+			<li ng-repeat="img in cachedJson.small_image" ng-show="cachedJson.small_image">
 				<a href="{{img}}" target="_blank">
 					<img src="{{img}}" alt="" class="imgSize">
 				</a>
 			</li>
+			<li ng-show="!cachedJson.small_image.length"><small>(none found)</small></li>
 		</ul>
 		
 	</div>
@@ -57,11 +68,12 @@
 	<div style="display:block;">
 		<h3>Medium images:</h3>
 		<ul>
-			<li ng-repeat="img in cachedJson.medium_image">
+			<li ng-repeat="img in cachedJson.medium_image" ng-show="cachedJson.medium_image">
 				<a href="{{img}}" target="_blank">
 					<img src="{{img}}" alt="" class="imgSize">
 				</a>
 			</li>
+			<li ng-show="!cachedJson.medium_image.length"><small>(none found)</small></li>
 		</ul>
 		
 	</div>
@@ -69,11 +81,12 @@
 	<div style="display:block;">
 		<h3>Large images:</h3>
 		<ul>
-			<li ng-repeat="img in cachedJson.large_image">
+			<li ng-repeat="img in cachedJson.large_image" ng-show="cachedJson.large_image">
 				<a href="{{img}}" target="_blank">
 					<img src="{{img}}" alt="" class="imgSize">
 				</a>
 			</li>
+			<li ng-show="!cachedJson.large_image.length"><small>(none found)</small></li>
 		</ul>
 		
 	</div>

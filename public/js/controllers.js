@@ -16,7 +16,9 @@ bookControllers.controller('showDatabaseBooksCtrl',
         });
     });
 
-bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFactory, IsbnToolsFactory) {
+bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFactory, IsbnToolsFactory,ApiResultsFactory) {
+
+    // ApiResultsFactory.resetCachedJsons();
 
     // handle finding new books
     $scope.lookUpBook = function () {
@@ -50,7 +52,7 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
              * Set testing values for input so that you don't have to type in a
              * valid isbn/objectid/knyttid every time
              */
-            inputValue = '0-19-852663-6';
+            // inputValue = '0-19-852663-6';
             // inputValue = '036051NA0';
 
             /*
@@ -110,6 +112,15 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
 bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
 
+    // ApiResultsFactory.cachedJsons.$watch();
+
     $scope.cachedJson = ApiResultsFactory.cachedJsons;
+
+    // $scope.$watch('ApiResultsFactory.cachedJsons', function(newValue, oldValue) {
+    //     if (newValue != oldValue) {
+    //         $scope.cachedJson = newValue;
+    //         console.log('test');
+    //     }
+    // });
 
 });

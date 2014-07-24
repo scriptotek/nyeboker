@@ -204,7 +204,22 @@ bookFactories.factory('ApiResultsFactory', function() {
 
         // this will be used to fetch data and have it update the view
         // automatically
-        cachedJsons: cachedJson
+        cachedJsons: cachedJson,
+
+        resetCachedJsons: function() {
+            cachedJson = {
+                isbn: [],
+                short_desc: [],
+                long_desc: [],
+                small_image: [],
+                medium_image: [],
+                large_image: [],
+                url: [],
+                authors: [],
+                title: [],
+                subtitle: []
+            };
+        }
 
     }
 
