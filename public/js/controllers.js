@@ -112,15 +112,6 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
 bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
 
-    // ApiResultsFactory.cachedJsons.$watch();
-
     $scope.cachedJson = ApiResultsFactory.cachedJsons;
-
-    // $scope.$watch('ApiResultsFactory.cachedJsons', function(newValue, oldValue) {
-    //     if (newValue != oldValue) {
-    //         $scope.cachedJson = newValue;
-    //         console.log('test');
-    //     }
-    // });
 
 });
