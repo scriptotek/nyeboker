@@ -1,49 +1,49 @@
 <div>
 
-	<h3>ISBNs</h3>
 	<div>
+		<h3>ISBNs</h3>
 		<ul>
 			<li ng-repeat="isbn in cachedJson.isbn">{{ isbn }}</li>
 		</ul>
 	</div>
 
-	<h3>Title</h3>
 	<div>
+		<h3>Title</h3>
 		<ul>
 			<li ng-repeat="title in cachedJson.title">{{ title }}</li>
 		</ul>
 	</div>
 
-	<h3>Subtitle</h3>
 	<div>
+		<h3>Subtitle</h3>
 		<ul>
 			<li ng-repeat="subtitle in cachedJson.subtitle">{{ subtitle }}</li>
 		</ul>
 	</div>
 
-	<h3>Authors</h3>
 	<div>
+		<h3>Authors</h3>
 		<ul>
 			<li ng-repeat="author in cachedJson.authors">{{ author }}</li>
 		</ul>
 	</div>
 
-	<h3>Short Description</h3>
 	<div>
+		<h3>Short Description</h3>
 		<ul>
 			<li ng-repeat="desc in cachedJson.short_desc">{{ desc }}</li>
 		</ul>
 	</div>
 
-	<h3>Long Description</h3>
 	<div>
+		<h3>Long Description</h3>
 		<ul>
 			<li ng-repeat="desc in cachedJson.long_desc">{{ desc }}</li>
 		</ul>
 	</div>
 
-	<h3>Small images:</h3>
 	<div style="display:block;">
+		<h3>Small images:</h3>
 		<ul>
 			<li ng-repeat="img in cachedJson.small_image">
 				<a href="{{img}}" target="_blank">
@@ -54,8 +54,8 @@
 		
 	</div>
 
-	<h3>Medium images:</h3>
 	<div style="display:block;">
+		<h3>Medium images:</h3>
 		<ul>
 			<li ng-repeat="img in cachedJson.medium_image">
 				<a href="{{img}}" target="_blank">
@@ -66,8 +66,8 @@
 		
 	</div>
 
-	<h3>Large images:</h3>
 	<div style="display:block;">
+		<h3>Large images:</h3>
 		<ul>
 			<li ng-repeat="img in cachedJson.large_image">
 				<a href="{{img}}" target="_blank">
