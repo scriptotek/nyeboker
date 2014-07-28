@@ -1,0 +1,12 @@
+<div>
+	<h3>Images:</h3>
+	<ul>
+		<li ng-repeat="img in allImages" ng-show="allImages">
+			<a href="{{img}}" target="_blank">
+				<img src="{{img}}" alt="" class="imgSize">
+			</a>
+		</li>
+		<li ng-show="!allImages.length"><small>(none found)</small></li>
+	</ul>
+	
+</div>

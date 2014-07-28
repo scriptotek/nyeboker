@@ -1,0 +1,17 @@
+<div>
+	<h3>Title</h3>
+	<ul>
+		<li ng-repeat="title in titles" ng-show="titles">
+			<label>
+				<input
+					type="radio"
+					ng-model="$parent.title"
+					name="title"
+					ng-value="title"
+					required>
+				{{title}}
+			</label>
+		</li>
+		<li ng-show="!titles.length"><small>(none found)</small></li>
+	</ul>
+</div>

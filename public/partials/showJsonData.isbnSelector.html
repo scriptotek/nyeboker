@@ -1,0 +1,17 @@
+<div>
+	<h3>ISBN</h3>
+	<ul>
+		<li ng-repeat="isbn in isbns" ng-show="isbns">
+			<label>
+				<input
+					type="radio"
+					ng-model="$parent.isbn"
+					name="isbn"
+					ng-value="isbn"
+					required>
+				{{isbn}}
+			</label>
+		</li>
+		<li ng-show="!isbns.length"><small>(none found)</small></li>
+	</ul>
+</div>

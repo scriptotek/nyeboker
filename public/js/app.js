@@ -27,6 +27,26 @@ bookApp.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: 'partials/showJsonData.html',
             controller: 'showJsonDataCtrl'
         })
+        .state('showJsonData.isbnSelector', {
+            url: '/isbnSelector',
+            templateUrl: 'partials/showJsonData.isbnSelector.html',
+            controller: 'isbnSelectorCtrl'
+        })
+        .state('showJsonData.imageSelector', {
+            url: '/imageSelector',
+            templateUrl: 'partials/showJsonData.imageSelector.html',
+            controller: 'imageSelectorCtrl'
+        })
+        .state('showJsonData.titleSelector', {
+            url: '/titleSelector',
+            templateUrl: 'partials/showJsonData.titleSelector.html',
+            controller: 'titleSelectorCtrl'
+        })
+        .state('showJsonData.descriptionSelector', {
+            url: '/descriptionSelector',
+            templateUrl: 'partials/showJsonData.descriptionSelector.html',
+            controller: 'descriptionSelectorCtrl'
+        })
 });
 
 bookApp.directive("loadingspinner", function() {

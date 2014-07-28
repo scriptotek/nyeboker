@@ -34,7 +34,7 @@ bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFa
             // MetaDataApiFactory:
             // MetaDataApiFactory.getApiJson(isbns);
             MetaDataApiFactory.getApiJson(isbns, function() {
-                $state.go('showJsonData');
+                $state.go('showJsonData.isbnSelector');
             });
 
             // the calls to the APIs are not done yet, but we will
@@ -117,5 +117,42 @@ bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFa
 bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
 
     $scope.cachedJson = ApiResultsFactory.cachedJsons;
+
+});
+
+bookControllers.controller('isbnSelectorCtrl', function($scope, ApiResultsFactory) {
+
+    var cachedJson = ApiResultsFactory.cachedJsons;
+    $scope.isbns = cachedJson.isbn;
+
+});
+
+bookControllers.controller('imageSelectorCtrl', function($scope, ApiResultsFactory) {
+
+    var cachedJson = ApiResultsFactory.cachedJsons;
+    $scope.allImages = [];
+    $scope.allImages =
+        $scope.allImages
+        .concat(cachedJson.small_image)
+        .concat(cachedJson.medium_image)
+        .concat(cachedJson.large_image);
+
+});
+
+bookControllers.controller('titleSelectorCtrl', function($scope, ApiResultsFactory) {
+
+    var cachedJson = ApiResultsFactory.cachedJsons;
+    $scope.titles = cachedJson.title;
+
+});
+
+bookControllers.controller('descriptionSelectorCtrl', function($scope, ApiResultsFactory) {
+
+    var cachedJson = ApiResultsFactory.cachedJsons;
+    $scope.allDescriptions = [];
+    $scope.allDescriptions =
+        $scope.allDescriptions
+        .concat(cachedJson.short_desc)
+        .concat(cachedJson.long_desc);
 
 });
