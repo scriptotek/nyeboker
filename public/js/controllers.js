@@ -16,9 +16,10 @@ bookControllers.controller('showDatabaseBooksCtrl',
         });
     });
 
-bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFactory, IsbnToolsFactory,ApiResultsFactory) {
+bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFactory, IsbnToolsFactory, ApiResultsFactory) {
 
-    // ApiResultsFactory.resetCachedJsons();
+    // for debugging. default input value
+    $scope.inputValue = '036051NA0';
 
     // handle finding new books
     $scope.lookUpBook = function () {
@@ -31,17 +32,20 @@ bookControllers.controller('addNewCtrl', function ($scope, $state, MetaDataApiFa
 
             // this will call all APIs set in the variable urls in
             // MetaDataApiFactory:
-            MetaDataApiFactory.getApiJson(isbns);
+            // MetaDataApiFactory.getApiJson(isbns);
+            MetaDataApiFactory.getApiJson(isbns, function() {
+                $state.go('showJsonData');
+            });
 
             // the calls to the APIs are not done yet, but we will
             // move to the results page and add results to the view
             // as they come
-            $state.go('showJsonData');
+            // $state.go('showJsonData');
 
         }
 
         // check if form is valid
-        if ($scope.addNewForm.$valid) {
+        if ($scope.lookUpForm.$valid) {
 
             console.log('form validation passed');
 

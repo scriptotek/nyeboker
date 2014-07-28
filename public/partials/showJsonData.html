@@ -1,13 +1,27 @@
 <div>
+<form
+	name="storeNewForm"
+	ng-submit="storeNewBook()"
+	novalidate>
 
 	<div>
-		<p>If you've <a ui-sref="addNew">made a search</a> then the results will appear below. It might take a couple of seconds.</p>
+		<p>The data we found is displayed below. Select the data you want to move on with.</p>
 	</div>
 
 	<div>
 		<h3>ISBNs</h3>
 		<ul>
-			<li ng-repeat="isbn in cachedJson.isbn" ng-show="cachedJson.isbn">{{ isbn }}</li>
+			<li ng-repeat="isbn in cachedJson.isbn" ng-show="cachedJson.isbn">
+				<label>
+					<input
+						type="radio"
+						ng-model="$parent.isbn"
+						name="isbn"
+						ng-value="isbn"
+						required>
+					{{isbn}}
+				</label>
+			</li>
 			<li ng-show="!cachedJson.isbn.length"><small>(none found)</small></li>
 		</ul>
 	</div>
@@ -15,7 +29,17 @@
 	<div>
 		<h3>Title</h3>
 		<ul>
-			<li ng-repeat="title in cachedJson.title" ng-show="cachedJson.title">{{ title }}</li>
+			<li ng-repeat="title in cachedJson.title" ng-show="cachedJson.title">
+				<label>
+					<input
+						type="radio"
+						ng-model="$parent.title"
+						name="title"
+						ng-value="title"
+						required>
+					{{title}}
+				</label>
+			</li>
 			<li ng-show="!cachedJson.title.length"><small>(none found)</small></li>
 		</ul>
 	</div>
@@ -23,7 +47,17 @@
 	<div>
 		<h3>Subtitle</h3>
 		<ul>
-			<li ng-repeat="subtitle in cachedJson.subtitle" ng-show="cachedJson.subtitle">{{ subtitle }}</li>
+			<li ng-repeat="subtitle in cachedJson.subtitle" ng-show="cachedJson.subtitle">
+				<label>
+					<input
+						type="radio"
+						ng-model="$parent.subtitle"
+						name="subtitle"
+						ng-value="subtitle"
+						required>
+					{{subtitle}}
+				</label>
+			</li>
 			<li ng-show="!cachedJson.subtitle.length"><small>(none found)</small></li>
 		</ul>
 	</div>
@@ -31,7 +65,17 @@
 	<div>
 		<h3>Authors</h3>
 		<ul>
-			<li ng-repeat="author in cachedJson.authors" ng-show="cachedJson.authors">{{ author }}</li>
+			<li ng-repeat="author in cachedJson.authors" ng-show="cachedJson.authors">
+				<label>
+					<input
+						type="radio"
+						ng-model="$parent.author"
+						name="author"
+						ng-value="author"
+						required>
+					{{author}}
+				</label>
+			</li>
 			<li ng-show="!cachedJson.authors.length"><small>(none found)</small></li>
 		</ul>
 	</div>
@@ -91,6 +135,7 @@
 		
 	</div>
 
+</form>
 </div>
 
 <!-- show loading spinner if we're still fetching data -->

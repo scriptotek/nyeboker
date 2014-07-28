@@ -1,5 +1,5 @@
 <form
-	name="addNewForm"
+	name="lookUpForm"
 	ng-submit="lookUpBook()"
 	novalidate>
 
@@ -7,8 +7,8 @@
 	<div
 		class="form-group"
 		ng-class="{
-			'has-error' : addNewForm.inputValue.$invalid && addNewForm.inputValue.$dirty,
-			'has-success': addNewForm.inputValue.$valid && addNewForm.inputValue.$dirty
+			'has-error' : lookUpForm.inputValue.$invalid && lookUpForm.inputValue.$dirty,
+			'has-success': lookUpForm.inputValue.$valid && lookUpForm.inputValue.$dirty
 		}">
 
 		<input
@@ -25,7 +25,7 @@
 		<br>
 		
 		<span
-			ng-show="addNewForm.inputValue.$dirty && addNewForm.inputValue.$error.minlength && !addNewForm.inputValue.$focused">
+			ng-show="lookUpForm.inputValue.$dirty && lookUpForm.inputValue.$error.minlength && !lookUpForm.inputValue.$focused">
 			You need to enter a valid ISBN/docid/objectid number.
 		</span>
 	</div>
@@ -34,7 +34,7 @@
 	<div class="form-group text-right">
 		<button
 			class="btn btn-primary btn-lg"
-			ng-disabled="addNewForm.$invalid">
+			ng-disabled="lookUpForm.$invalid">
 			Submit
 		</button>
 	</div>

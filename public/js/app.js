@@ -12,20 +12,20 @@ bookApp.config(function($stateProvider, $urlRouterProvider) {
             url: '/index',
             templateUrl: 'partials/index.html'
         })
-        .state('addNew', {
-            url: '/addNew',
-            templateUrl: 'partials/addNew.html',
-            controller: 'addNewCtrl'
-        })
-        .state('showJsonData', {
-            url: '/showJsonData',
-            templateUrl: 'partials/showJsonData.html',
-            controller: 'showJsonDataCtrl'
+        .state('lookUp', {
+            url: '/lookUp',
+            templateUrl: 'partials/lookUp.html',
+            controller: 'lookUpCtrl'
         })
         .state('showDatabaseBooks', {
             url: '/showDatabaseBooks',
             templateUrl: 'partials/showDatabaseBooks.html',
             controller: 'showDatabaseBooksCtrl'
+        })
+        .state('showJsonData', {
+            url: '/showJsonData',
+            templateUrl: 'partials/showJsonData.html',
+            controller: 'showJsonDataCtrl'
         })
 });
 

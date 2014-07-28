@@ -75,8 +75,6 @@ bookFactories.factory('IsbnToolsFactory', function($http) {
         findObjectId: function(inputValue, callback) {
             return $http.get('http://services.biblionaut.net/getids.php?id=' + inputValue)
             .success(function(data) {
-                console.log('Got result from isbnToolsFactory.findObjectId:');
-                console.log(data);
                 callback(data);
             })
             .error(function(error) {
@@ -90,8 +88,6 @@ bookFactories.factory('IsbnToolsFactory', function($http) {
         findISBNs: function(inputValue, callback) {
             return $http.get('http://services.biblionaut.net/sru_iteminfo.php?id=' + inputValue)
             .success(function(data) {
-                console.log('Got result from isbnToolsFactory.findISBNs:');
-                console.log(data);
                 callback(data);
             })
             .error(function(error) {
@@ -115,8 +111,6 @@ bookFactories.factory('DatabaseFactory', function($http) {
         getDatabaseBooks: function(callback) {
             $http.get('api/books')
             .success(function(data) {
-                console.log('Success in getDatabaseBooks:');
-                console.log(data);
                 cachedDatabaseBooks = data;
                 callback(data);
             })
@@ -185,7 +179,7 @@ bookFactories.factory('ApiResultsFactory', function() {
 
                     // if the API had started returning a resource we don't
                     // know about, log the resource name
-                    console.log(key);
+                    console.log('found unknown key:' + key);
 
                 } else {
 
@@ -226,17 +220,17 @@ bookFactories.factory('ApiResultsFactory', function() {
 });
 
 // functions that deal with the metadata api
-bookFactories.factory('MetaDataApiFactory', function($http, ApiResultsFactory) {
+bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactory) {
 
     // apis to fetch data from
     var urls = [
-        'http://services.biblionaut.net/metadata/bibsys.php?id=',
-        'http://services.biblionaut.net/metadata/nielsen.php?id=',
-        'http://services.biblionaut.net/metadata/google.php?id=',
-        'http://services.biblionaut.net/metadata/openlibrary.php?id=',
-        'http://services.biblionaut.net/metadata/isbndb.php?id=',
-        'http://services.biblionaut.net/metadata/librarything.php?id=',
-        'http://services.biblionaut.net/metadata/springer.php?id='
+        'http://services.biblionaut.net/metadata/bibsys.php',
+        'http://services.biblionaut.net/metadata/nielsen.php',
+        'http://services.biblionaut.net/metadata/google.php',
+        'http://services.biblionaut.net/metadata/openlibrary.php',
+        'http://services.biblionaut.net/metadata/isbndb.php',
+        'http://services.biblionaut.net/metadata/librarything.php',
+        'http://services.biblionaut.net/metadata/springer.php'
     ];
 
     // old holdervariable for when I only used one api:
@@ -244,39 +238,73 @@ bookFactories.factory('MetaDataApiFactory', function($http, ApiResultsFactory) {
 
     return {
 
-        getApiJson: function(isbnArray) {
+        getApiJson: function(isbnArray, callback) {
 
             // since we're getting an array of isbns here, join them separated
             // by commas since that's the format the metadata apis takes
             var isbnsCommaSeparated = isbnArray.join(',');
 
-            // fetch data from all urls
-            angular.forEach(urls, function(url) {
+            // function for when requests have gotten data
+            var onSuccess = function(data) {
 
-                $http.get(url + isbnsCommaSeparated)
-                .success(function(data) {
+                // go though all data and store
+                angular.forEach(data, function(res) {
 
-                    // go though all data and store
-                    angular.forEach(data, function(res) {
+                    // now we have to check if we got a result. if we
+                    // didn't then the object would have an error
+                    // property with value 404. we make sure it doesn't
+                    // have that, and that it is an object
+                    if (typeof res === 'object' && res.error != '404') {
 
-                        // now we have to check if we got a result. if we
-                        // didn't then the object would have an error
-                        // property with value 404. we make sure it doesn't
-                        // have that, and that it is an object
-                        if (typeof res === 'object' && res.error != '404') {
+                        // console.log('success from resource: ' + url + isbnsCommaSeparated);
 
-                            // console.log('success from resource: ' + url + isbnsCommaSeparated);
+                        // send result to storage
+                        ApiResultsFactory.addResult(res);
 
-                            // send result to storage
-                            ApiResultsFactory.addResult(res);
-
-                        }
-                    });
-                })
-                .error(function() {
-                    console.log('Unable to fetch from: ' + url);
+                    }
                 });
 
+            }
+
+            // how long should we wait for each resource?
+            var timeoutLimit = 5000;
+
+            // a variable that counts how many resources are done, 
+            // regardless of whether they succeeded or not
+            var amountDone = 0;
+
+            // start all requests
+            angular.forEach(urls, function(url) {
+
+                $http({
+                    method: 'get',
+                    url: url,
+                    params: {
+                        'id': isbnsCommaSeparated
+                    },
+                    timeout: timeoutLimit
+                })
+
+                // if the http call returns results for us:
+                .success(function(data) {
+
+                    // go on to check and store results:
+                    onSuccess(data);
+
+                    amountDone++;
+                    // if we're done with all resources, call callback function
+                    if (amountDone === urls.length) callback();
+                
+                })
+
+                // if it didn't return anything or it timed out:
+                .error(function() {
+                
+                    amountDone++;
+                    // if we're done with all resources, call callback function
+                    if (amountDone === urls.length) callback();
+                
+                });
             });
 
         }
