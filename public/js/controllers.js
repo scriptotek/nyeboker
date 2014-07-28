@@ -24,6 +24,9 @@ bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFa
     // handle finding new books
     $scope.lookUpBook = function () {
 
+        // remove stored results from previous search
+        ApiResultsFactory.resetCachedJsons();
+
         $scope.loading = true;
 
         // will be used when we're ready to fetch results. is it's own function

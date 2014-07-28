@@ -200,19 +200,18 @@ bookFactories.factory('ApiResultsFactory', function() {
         // automatically
         cachedJsons: cachedJson,
 
+        // remove data in the array without creating a new one
         resetCachedJsons: function() {
-            cachedJson = {
-                isbn: [],
-                short_desc: [],
-                long_desc: [],
-                small_image: [],
-                medium_image: [],
-                large_image: [],
-                url: [],
-                authors: [],
-                title: [],
-                subtitle: []
-            };
+            cachedJson.isbn.length = 0;
+            cachedJson.short_desc.length = 0;
+            cachedJson.long_desc.length = 0;
+            cachedJson.small_image.length = 0;
+            cachedJson.medium_image.length = 0;
+            cachedJson.large_image.length = 0;
+            cachedJson.url.length = 0;
+            cachedJson.authors.length = 0;
+            cachedJson.title.length = 0;
+            cachedJson.subtitle.length = 0;
         }
 
     }
