@@ -119,7 +119,14 @@ bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFa
 
 bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
 
+    $scope.error = null;
+
     $scope.cachedJson = ApiResultsFactory.cachedJsons;
+
+    // show error message if we haven't made a search
+    if ($scope.cachedJson.isbn.length === 0) {
+        $scope.error = 'You have to make a search before seeing anything here. Click "Look Up New Book" in the menu above.';
+    }
 
 });
 
@@ -231,7 +238,5 @@ bookControllers.controller('descriptionSelectorCtrl', function($scope, ApiResult
 bookControllers.controller('informationEditorCtrl', function($scope, InformationEditorFactory) {
 
     var info = InformationEditorFactory.getInfo();
-
-    console.log(info);
 
 });

@@ -1,4 +1,7 @@
-<div>
+<!-- show error if something went wrong -->
+<errormessage></errormessage>
+
+<div ng-show="!error">
 	<p>Here you'll select the data you want to move on with. Click on the data you want for each data type, and in the end (in "edit") you'll be able to manually edit the data. If you don't see anything here, go <a ui-sref="lookUp">make a search</a>.</p>
 	<p>
 		<a ui-sref="showJsonData.isbnSelector">ISBN</a> 
@@ -15,4 +18,4 @@
 	</p>
 </div>
 
-<div ui-view></div>
+<div ui-view ng-show="!error"></div>
