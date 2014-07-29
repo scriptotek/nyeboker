@@ -2,7 +2,9 @@ var bookFactories = angular.module('bookFactories', []);
 
 // collection of functions that operate on isbn numbers
 bookFactories.factory('IsbnToolsFactory', function($http) {
+
     return {
+
         /*
          * Converts a isbn10 number into a isbn13.
          * The isbn10 is a string of length 10 and must be a legal isbn10. No
@@ -94,7 +96,9 @@ bookFactories.factory('IsbnToolsFactory', function($http) {
                 console.log('Error in isbnToolsFactory.findISBNs');
             });
         }
+
     }
+
 });
 
 // functions that deal with our local database
@@ -104,10 +108,8 @@ bookFactories.factory('DatabaseFactory', function($http) {
     
     return {
 
-        getCachedbooks: function() {
-            return cachedDatabaseBooks;
-        },
-
+        // retrieves books from the database, and calls callback function
+        // if successful
         getDatabaseBooks: function(callback) {
             $http.get('api/books')
             .success(function(data) {
@@ -129,7 +131,7 @@ bookFactories.factory('DatabaseFactory', function($http) {
             });
         },
 
-        // destroy a book
+        // remove a book from the database
         destroy : function(id) {
             return $http.delete('api/books/' + id);
         }
@@ -156,6 +158,7 @@ bookFactories.factory('InformationEditorFactory', function() {
             return info;
         },
 
+        // simple setter
         setInfo: function(key, value) {
             info[key] = value;
         }
@@ -184,17 +187,9 @@ bookFactories.factory('ApiResultsFactory', function() {
     return {
 
         // this will receive data from the different APIs and store the data
-        // for us. The expected format is:
-        /*
-            {
-                url: "https://www.googleapis.com/books/v1/volumes?q=9780198566762",
-                isbn: "9780198566762",
-                long_desc: "Sethna distills the core ideas of statistical mechanics to make room for new advances important to information theory, complexity, and modern biology. He explores everything from chaos through to life at the end of the universe.",
-                short_desc: "Sethna distills the core ideas of statistical mechanics to make room for new advances important to information theory, complexity, and modern biology. He explores everything from chaos through to life at the end of the universe.",
-                small_image: "http://bks5.books.google.co.uk/books?id=m_LSngEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
-                medium_image: "http://bks5.books.google.co.uk/books?id=m_LSngEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
-            }
-        */
+        // for us. the function goes through the keys of the received object
+        // and adds the values for each key in our cachedJson array (assuming
+        // that the keys exist in the array) if not already there.
         addResult: function(object) {
 
             // get keys
@@ -223,8 +218,7 @@ bookFactories.factory('ApiResultsFactory', function() {
 
         },
 
-        // this will be used to fetch data and have it update the view
-        // automatically
+        // get a reference to our array
         cachedJsons: cachedJson,
 
         // remove data in the array (without creating a new array, because
@@ -260,9 +254,6 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
         'http://services.biblionaut.net/metadata/springer.php'
     ];
 
-    // old holdervariable for when I only used one api:
-    // var cachedJson;
-
     return {
 
         getApiJson: function(isbnArray, callback) {
@@ -274,16 +265,15 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
             // function for when requests have gotten data
             var onSuccess = function(data) {
 
-                // go though all data and store
+                // since we might have multiple results for each resource,
+                // iterate through them
                 angular.forEach(data, function(res) {
 
-                    // now we have to check if we got a result. if we
-                    // didn't then the object would have an error
-                    // property with value 404. we make sure it doesn't
-                    // have that, and that it is an object
+                    // here we have to check if we actually got a result. if we
+                    // didn't, then the object would have an error property
+                    // with value 404. we make sure it doesn't nd that it is
+                    // an object
                     if (typeof res === 'object' && res.error != '404') {
-
-                        // console.log('success from resource: ' + url + isbnsCommaSeparated);
 
                         // send result to storage
                         ApiResultsFactory.addResult(res);
@@ -293,11 +283,14 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
 
             }
 
-            // how long should we wait for each resource?
-            var timeoutLimit = 5000;
+            // how long should we wait for each resource? the ajax request is
+            // cancelled after this many seconds
+            var timeoutLimit = 5;
 
             // a variable that counts how many resources are done, 
-            // regardless of whether they succeeded or not
+            // regardless of whether they succeeded or not. this is used so
+            // that we know when we can redirect to the view that displays the
+            // results (the callback function does this)
             var amountDone = 0;
 
             // start all requests
@@ -309,7 +302,7 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
                     params: {
                         'id': isbnsCommaSeparated
                     },
-                    timeout: timeoutLimit
+                    timeout: timeoutLimit*1000
                 })
 
                 // if the http call returns results for us:
@@ -321,7 +314,7 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
                     amountDone++;
                     // if we're done with all resources, call callback function
                     if (amountDone === urls.length) callback();
-                
+
                 })
 
                 // if it didn't return anything or it timed out:
