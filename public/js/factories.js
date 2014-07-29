@@ -227,7 +227,8 @@ bookFactories.factory('ApiResultsFactory', function() {
         // automatically
         cachedJsons: cachedJson,
 
-        // remove data in the array without creating a new one
+        // remove data in the array (without creating a new array, because
+        // that messes up the data bindings)
         resetCachedJsons: function() {
             cachedJson.isbn.length = 0;
             cachedJson.short_desc.length = 0;
