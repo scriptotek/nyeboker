@@ -47,48 +47,47 @@ bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFa
 
         }
 
-        // check if form is valid
-        if ($scope.lookUpForm.$valid) {
 
-            console.log('form validation passed');
+        // get input value
+        var inputValue = $scope.inputValue;
+        
+        /*
+         * Set testing values for input so that you don't have to type in a
+         * valid isbn/objectid/knyttid every time
+         */
+        // inputValue = '0-19-852663-6';
+        // inputValue = '036051NA0';
 
-            // get input value
-            var inputValue = $scope.inputValue;
-            
-            /*
-             * Set testing values for input so that you don't have to type in a
-             * valid isbn/objectid/knyttid every time
-             */
-            // inputValue = '0-19-852663-6';
-            // inputValue = '036051NA0';
+        /*
+         * The possibilities now:
+         * 
+         * 1) input is valid isbn:
+         *    we send it straight to movingOn with the isbn number
+         * 
+         * 2) input.length == 9 and assumed to be docid/objectid
+         *    we have to find isbn number(s) connected. since we're not
+         *    sure whether we have objectid or docid at this point, we'll
+         *    use IsbnToolsFactory.findObjectId to get the objectid. Then
+         *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
+         *    connected. Then we can use movingOn with the isbn numbers
+         *    we found
+         * 
+         *  3) invalid input. show error somewhere
+        */
 
-            /*
-             * The possibilities now:
-             * 
-             * 1) input is valid isbn:
-             *    we send it straight to movingOn with the isbn number
-             * 
-             * 2) input.length == 9 and assumed to be docid/objectid
-             *    we have to find isbn number(s) connected. since we're not
-             *    sure whether we have objectid or docid at this point, we'll
-             *    use IsbnToolsFactory.findObjectId to get the objectid. Then
-             *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
-             *    connected. Then we can use movingOn with the isbn numbers
-             *    we found
-             * 
-             *  3) invalid input. show error somewhere
-            */
+        if (IsbnToolsFactory.isISBN(inputValue)) {
 
-            if (IsbnToolsFactory.isISBN(inputValue)) {
+            console.log('Input is ISBN.');
+            movingOn([inputValue]);
 
-                console.log('Input is ISBN.');
-                movingOn([inputValue]);
+        } else if (inputValue.length === 9) {
 
-            } else if (inputValue.length === 9) {
+            console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
 
-                console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
+            IsbnToolsFactory.findObjectId(inputValue, function(objektidData) {
 
-                IsbnToolsFactory.findObjectId(inputValue, function(objektidData) {
+                // did we find an objektid?
+                if (objektidData.objektid) {
 
                     // now try to find isbn numbers connected
                     IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
@@ -96,23 +95,25 @@ bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFa
                         movingOn(isbnData.isbn);
 
                     });
-                });
 
-            } else {
+                } else {
 
-                $scope.loading = false;
-                console.log('Invalid input.');
-                $scope.error = 'Invalid input.';
+                    $scope.loading = false;
+                    console.log('Invalid input.');
+                    $scope.error = 'Invalid input.';
 
-            }
+                }
+
+            });
 
         } else {
 
             $scope.loading = false;
-            console.log('Form not valid.');
-            $scope.error = 'Form not valid.';
+            console.log('Invalid input.');
+            $scope.error = 'Invalid input.';
 
         }
+
     }
 
 });
