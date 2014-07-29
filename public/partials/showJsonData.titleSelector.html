@@ -1,17 +1,22 @@
 <div>
+	
 	<h3>Title</h3>
-	<ul>
-		<li ng-repeat="title in titles" ng-show="titles">
-			<label>
-				<input
-					type="radio"
-					ng-model="$parent.title"
-					name="title"
-					ng-value="title"
-					required>
-				{{title}}
-			</label>
-		</li>
-		<li ng-show="!titles.length"><small>(none found)</small></li>
-	</ul>
+
+	<button
+		type="button"
+		ng-repeat="title in titles"
+		ng-show="titles"
+		class="btn btn-default btn-block"
+		ng-class="{buttonSelected: title === 
+		selectedTitle}"
+		ng-model="title"
+		ng-value="title"
+		ng-click="selectThis($index)">
+		{{title}}
+	</button>
+
+	<small ng-show="!titles.length">
+		(none found)
+	</small>
+
 </div>

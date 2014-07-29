@@ -1,8 +1,22 @@
 <div>
-	<h3>Descriptions:</h3>
-	<ul>
-		<li ng-repeat="desc in allDescriptions" ng-show="allDescriptions">{{ desc }}</li>
-		<li ng-show="!allDescriptions.length"><small>(none found)</small></li>
-	</ul>
 	
+	<h3>Description</h3>
+
+	<button
+		type="button"
+		ng-repeat="desc in allDescriptions"
+		ng-show="allDescriptions"
+		class="btn btn-default btn-block"
+		ng-class="{buttonSelected: desc === 
+		selectedDesc}"
+		ng-model="desc"
+		ng-value="desc"
+		ng-click="selectThis($index)">
+		{{desc}}
+	</button>
+
+	<small ng-show="!allDescriptions.length">
+		(none found)
+	</small>
+
 </div>

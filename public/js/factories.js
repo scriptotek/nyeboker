@@ -137,6 +137,33 @@ bookFactories.factory('DatabaseFactory', function($http) {
     }
 });
 
+// factory to store the information the user has selected about a book
+// before storing it in our database
+bookFactories.factory('InformationEditorFactory', function() {
+
+    var info = {
+        isbn: '',
+        image: '',
+        title: '',
+        author: '',
+        desc: ''
+    };
+
+    return {
+
+        // function to get a referense to info
+        getInfo: function() {
+            return info;
+        },
+
+        setInfo: function(key, value) {
+            info[key] = value;
+        }
+
+    }
+
+})
+
 // factory to store search results
 bookFactories.factory('ApiResultsFactory', function() {
 

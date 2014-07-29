@@ -26,6 +26,15 @@
 			.imgSize {
 				max-width: 100px;
 			}
+
+			.buttonSizer {
+				margin-bottom: 10px;
+				white-space: normal;
+			}
+
+			.buttonSelected {
+				background-color: green;
+			}
 		</style>
 
 		<!-- JS -->

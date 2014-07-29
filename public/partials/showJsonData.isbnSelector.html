@@ -1,17 +1,22 @@
 <div>
+
 	<h3>ISBN</h3>
-	<ul>
-		<li ng-repeat="isbn in isbns" ng-show="isbns">
-			<label>
-				<input
-					type="radio"
-					ng-model="$parent.isbn"
-					name="isbn"
-					ng-value="isbn"
-					required>
-				{{isbn}}
-			</label>
-		</li>
-		<li ng-show="!isbns.length"><small>(none found)</small></li>
-	</ul>
+
+	<button
+		type="button"
+		ng-repeat="isbn in isbns"
+		ng-show="isbns"
+		class="btn btn-default btn-block"
+		ng-class="{buttonSelected: isbn === 
+		selectedIsbn}"
+		ng-model="isbn"
+		ng-value="isbn"
+		ng-click="selectThis($index)">
+		{{isbn}}
+	</button>
+
+	<small ng-show="!isbns.length">
+		(none found)
+	</small>
+
 </div>

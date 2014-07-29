@@ -1,0 +1,22 @@
+<div>
+	
+	<h3>Author</h3>
+
+	<button
+		type="button"
+		ng-repeat="author in authors"
+		ng-show="authors"
+		class="btn btn-default btn-block"
+		ng-class="{buttonSelected: author === 
+		selectedAuthor}"
+		ng-model="author"
+		ng-value="author"
+		ng-click="selectThis($index)">
+		{{author}}
+	</button>
+
+	<small ng-show="!authors.length">
+		(none found)
+	</small>
+
+</div>

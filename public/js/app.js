@@ -42,10 +42,20 @@ bookApp.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: 'partials/showJsonData.titleSelector.html',
             controller: 'titleSelectorCtrl'
         })
+        .state('showJsonData.authorSelector', {
+            url: '/authorSelector',
+            templateUrl: 'partials/showJsonData.authorSelector.html',
+            controller: 'authorSelectorCtrl'
+        })
         .state('showJsonData.descriptionSelector', {
             url: '/descriptionSelector',
             templateUrl: 'partials/showJsonData.descriptionSelector.html',
             controller: 'descriptionSelectorCtrl'
+        })
+        .state('showJsonData.informationEditor', {
+            url: '/informationEditor',
+            templateUrl: 'partials/showJsonData.informationEditor.html',
+            controller: 'informationEditorCtrl'
         })
 });
 

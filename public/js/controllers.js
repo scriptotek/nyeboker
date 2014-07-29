@@ -123,14 +123,27 @@ bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFacto
 
 });
 
-bookControllers.controller('isbnSelectorCtrl', function($scope, ApiResultsFactory) {
+bookControllers.controller('isbnSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
 
+    // reference to search results
     var cachedJson = ApiResultsFactory.cachedJsons;
     $scope.isbns = cachedJson.isbn;
 
+    // reference to stored search results
+    var info = InformationEditorFactory.getInfo();
+
+    // get the isbn already selected
+    $scope.selectedIsbn = info.isbn;
+
+    // if the user wants to move on with this piece of data
+    $scope.selectThis = function(index) {
+        InformationEditorFactory.setInfo('isbn', $scope.isbns[index]);
+        $scope.selectedIsbn = $scope.isbns[index];
+    }
+
 });
 
-bookControllers.controller('imageSelectorCtrl', function($scope, ApiResultsFactory) {
+bookControllers.controller('imageSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
 
     var cachedJson = ApiResultsFactory.cachedJsons;
     $scope.allImages = [];
@@ -140,16 +153,59 @@ bookControllers.controller('imageSelectorCtrl', function($scope, ApiResultsFacto
         .concat(cachedJson.medium_image)
         .concat(cachedJson.large_image);
 
+    // reference to stored search results
+    var info = InformationEditorFactory.getInfo();
+
+    // get the isbn already selected
+    $scope.selectedImg = info.image;
+
+    // if the user wants to move on with this piece of data
+    $scope.selectThis = function(index) {
+        InformationEditorFactory.setInfo('image', $scope.allImages[index]);
+        $scope.selectedImg = $scope.allImages[index];
+    }
+
 });
 
-bookControllers.controller('titleSelectorCtrl', function($scope, ApiResultsFactory) {
+bookControllers.controller('titleSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
 
     var cachedJson = ApiResultsFactory.cachedJsons;
     $scope.titles = cachedJson.title;
 
+    // reference to stored search results
+    var info = InformationEditorFactory.getInfo();
+
+    // get the title already selected
+    $scope.selectedTitle = info.title;
+
+    // if the user wants to move on with this piece of data
+    $scope.selectThis = function(index) {
+        InformationEditorFactory.setInfo('title', $scope.titles[index]);
+        $scope.selectedTitle = $scope.titles[index];
+    }
+
 });
 
-bookControllers.controller('descriptionSelectorCtrl', function($scope, ApiResultsFactory) {
+bookControllers.controller('authorSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
+
+    var cachedJson = ApiResultsFactory.cachedJsons;
+    $scope.authors = cachedJson.authors;
+
+    // reference to stored search results
+    var info = InformationEditorFactory.getInfo();
+
+    // get the author already selected
+    $scope.selectedAuthor = info.author;
+
+    // if the user wants to move on with this piece of data
+    $scope.selectThis = function(index) {
+        InformationEditorFactory.setInfo('author', $scope.authors[index]);
+        $scope.selectedAuthor = $scope.authors[index];
+    }
+
+});
+
+bookControllers.controller('descriptionSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
 
     var cachedJson = ApiResultsFactory.cachedJsons;
     $scope.allDescriptions = [];
@@ -157,5 +213,25 @@ bookControllers.controller('descriptionSelectorCtrl', function($scope, ApiResult
         $scope.allDescriptions
         .concat(cachedJson.short_desc)
         .concat(cachedJson.long_desc);
+
+    // reference to stored search results
+    var info = InformationEditorFactory.getInfo();
+
+    // get the description already selected
+    $scope.selectedDesc = info.desc;
+
+    // if the user wants to move on with this piece of data
+    $scope.selectThis = function(index) {
+        InformationEditorFactory.setInfo('desc', $scope.allDescriptions[index]);
+        $scope.selectedDesc = $scope.allDescriptions[index];
+    }
+
+});
+
+bookControllers.controller('informationEditorCtrl', function($scope, InformationEditorFactory) {
+
+    var info = InformationEditorFactory.getInfo();
+
+    console.log(info);
 
 });
