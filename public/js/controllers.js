@@ -1,3 +1,5 @@
+// To avoid polluting the global scope with our function declarations, we wrap
+// everything inside an IIFE
 (function() {
 
     // define the module that will hold all the controllers we're gonna use
