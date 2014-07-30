@@ -1,5 +1,12 @@
 (function() {
 
+    // define the module that will hold all the controllers we're gonna use
+    angular.module('bookControllers', []);
+    
+
+    // ------------------------------------------------------------------------
+
+
     function showDatabaseBooksCtrl($scope, $rootScope, DatabaseFactory){
 
         var vm = this;
@@ -21,6 +28,15 @@
         return vm;
 
     }
+
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('showDatabaseBooksCtrl', showDatabaseBooksCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
 
     function lookUpCtrl($state, MetaDataApiFactory, IsbnToolsFactory, ApiResultsFactory) {
 
@@ -127,13 +143,22 @@
 
     }
 
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('lookUpCtrl', lookUpCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
+
     function showJsonDataCtrl(ApiResultsFactory){
 
         var vm = this;
 
         vm.error = false;
 
-        vm.cachedJson = ApiResultsFactory.cachedJsons;
+        vm.cachedJson = ApiResultsFactory.cachedJson;
 
         // show error message if we haven't made a search
         if (vm.cachedJson.isbn.length === 0) {
@@ -146,19 +171,25 @@
 
     }
 
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('showJsonDataCtrl', showJsonDataCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
+
     function isbnSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
         var vm = this;
 
         // reference to search results
-        var cachedJson = ApiResultsFactory.cachedJsons;
+        var cachedJson = ApiResultsFactory.cachedJson;
         vm.isbns = cachedJson.isbn;
 
-        // reference to stored search results
-        var info = InformationEditorFactory.getInfo();
-
         // get the isbn already selected
-        vm.selectedIsbn = info.isbn;
+        vm.selectedIsbn = InformationEditorFactory.info.isbn;
 
         // if the user wants to move on with this piece of data
         vm.selectThis = function(index) {
@@ -170,11 +201,20 @@
 
     }
 
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('isbnSelectorCtrl', isbnSelectorCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
+
     function imageSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
         var vm = this;
 
-        var cachedJson = ApiResultsFactory.cachedJsons;
+        var cachedJson = ApiResultsFactory.cachedJson;
         vm.allImages = [];
         vm.allImages =
             vm.allImages
@@ -182,11 +222,8 @@
             .concat(cachedJson.medium_image)
             .concat(cachedJson.large_image);
 
-        // reference to stored search results
-        var info = InformationEditorFactory.getInfo();
-
         // get the isbn already selected
-        vm.selectedImg = info.image;
+        vm.selectedImg = InformationEditorFactory.info.image;
 
         // if the user wants to move on with this piece of data
         vm.selectThis = function(index) {
@@ -198,18 +235,24 @@
 
     }
 
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('imageSelectorCtrl', imageSelectorCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
+
     function titleSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
         var vm = this;
 
-        var cachedJson = ApiResultsFactory.cachedJsons;
+        var cachedJson = ApiResultsFactory.cachedJson;
         vm.titles = cachedJson.title;
 
-        // reference to stored search results
-        var info = InformationEditorFactory.getInfo();
-
         // get the title already selected
-        vm.selectedTitle = info.title;
+        vm.selectedTitle = InformationEditorFactory.info.title;
 
         // if the user wants to move on with this piece of data
         vm.selectThis = function(index) {
@@ -221,18 +264,23 @@
 
     }
 
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('titleSelectorCtrl', titleSelectorCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
     function authorSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
         var vm = this;
 
-        var cachedJson = ApiResultsFactory.cachedJsons;
+        var cachedJson = ApiResultsFactory.cachedJson;
         vm.authors = cachedJson.authors;
 
-        // reference to stored search results
-        var info = InformationEditorFactory.getInfo();
-
         // get the author already selected
-        vm.selectedAuthor = info.author;
+        vm.selectedAuthor = InformationEditorFactory.info.author;
 
         // if the user wants to move on with this piece of data
         vm.selectThis = function(index) {
@@ -244,22 +292,28 @@
 
     }
 
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('authorSelectorCtrl', authorSelectorCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
+
     function descriptionSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
         var vm = this;
 
-        var cachedJson = ApiResultsFactory.cachedJsons;
+        var cachedJson = ApiResultsFactory.cachedJson;
         vm.allDescriptions = [];
         vm.allDescriptions =
             vm.allDescriptions
             .concat(cachedJson.short_desc)
             .concat(cachedJson.long_desc);
 
-        // reference to stored search results
-        var info = InformationEditorFactory.getInfo();
-
         // get the description already selected
-        vm.selectedDesc = info.desc;
+        vm.selectedDesc = InformationEditorFactory.info.desc;
 
         // if the user wants to move on with this piece of data
         vm.selectThis = function(index) {
@@ -271,26 +325,28 @@
 
     }
 
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
+        .controller('descriptionSelectorCtrl', descriptionSelectorCtrl);
+    
+
+    // ------------------------------------------------------------------------
+
+
     function informationEditorCtrl(InformationEditorFactory) {
 
         var vm = this;
 
-        var info = InformationEditorFactory.getInfo();
+        vm.info = InformationEditorFactory.info;
 
         return vm;
 
     }
 
-    var bookControllers = angular
-        .module('bookControllers', [])
-        .controller('showDatabaseBooksCtrl', showDatabaseBooksCtrl)
-        .controller('lookUpCtrl', lookUpCtrl)
-        .controller('showJsonDataCtrl', showJsonDataCtrl)
-        .controller('isbnSelectorCtrl', isbnSelectorCtrl)
-        .controller('imageSelectorCtrl', imageSelectorCtrl)
-        .controller('titleSelectorCtrl', titleSelectorCtrl)
-        .controller('authorSelectorCtrl', authorSelectorCtrl)
-        .controller('descriptionSelectorCtrl', descriptionSelectorCtrl)
+    // add it to our bookControllers module
+    angular
+        .module('bookControllers')
         .controller('informationEditorCtrl', informationEditorCtrl);
 
 })();

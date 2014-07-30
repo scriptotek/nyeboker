@@ -1,9 +1,14 @@
-var bookFactories = angular.module('bookFactories', []);
+(function() {
 
-// collection of functions that operate on isbn numbers
-bookFactories.factory('IsbnToolsFactory', function($http) {
+    // define the module that will hold all the factories we're gonna use
+    angular.module('bookFactories', []);
+    
 
-    return {
+    // ------------------------------------------------------------------------
+
+
+    // IsbnToolsFactory will handle isbn/dokid/objektid lookups and isbn stuff
+    function IsbnToolsFactory($http) {
 
         /*
          * Converts a isbn10 number into a isbn13.
@@ -11,23 +16,31 @@ bookFactories.factory('IsbnToolsFactory', function($http) {
          * dashes.
          * Author: http://www.devforrest.com/blog/javascript-isbn-10-to-1313-to-10-conversion-code/
          */
-        ISBN10toISBN13: function(isbn10) {
-             
-            var sum = 38 + 3 * (parseInt(isbn10[0]) + parseInt(isbn10[2]) + parseInt(isbn10[4]) + parseInt(isbn10[6]) 
-                        + parseInt(isbn10[8])) + parseInt(isbn10[1]) + parseInt(isbn10[3]) + parseInt(isbn10[5]) + parseInt(isbn10[7]);
+        IsbnToolsFactory.ISBN10toISBN13 = function(isbn10) {
+            var sum =
+                38 +
+                3 * (parseInt(isbn10[0], 10) +
+                     parseInt(isbn10[2], 10) +
+                     parseInt(isbn10[4], 10) +
+                     parseInt(isbn10[6], 10) +
+                     parseInt(isbn10[8], 10)) +
+                parseInt(isbn10[1], 10) +
+                parseInt(isbn10[3], 10) +
+                parseInt(isbn10[5], 10) +
+                parseInt(isbn10[7], 10);
              
             var checkDig = (10 - (sum % 10)) % 10;
              
             return "978" + isbn10.substring(0, 9) + checkDig;
-        },
-         
+        };
+
         /*
          * Converts a isbn13 into an isbn10.
          * The isbn13 is a string of length 13 and must be a legal isbn13. No
          * dashes.
          * Author: http://www.devforrest.com/blog/javascript-isbn-10-to-1313-to-10-conversion-code/
          */
-        ISBN13toISBN10: function(isbn13) {
+        IsbnToolsFactory.ISBN13toISBN10 = function(isbn13) {
          
             var start = isbn13.substring(3, 12);
             var sum = 0;
@@ -35,7 +48,7 @@ bookFactories.factory('IsbnToolsFactory', function($http) {
             var i;
              
             for(i = 0; i < 9; i++) {
-                sum = sum + (mul * parseInt(start[i]));
+                sum = sum + (mul * parseInt(start[i], 10));
                 mul -= 1;
             }
              
@@ -47,70 +60,77 @@ bookFactories.factory('IsbnToolsFactory', function($http) {
             }
              
             return start + checkDig;
-        },
+        };
 
         /*
          * stripISBN
          * Removes hyphens and X from given string.
          */
-        stripISBN: function(isbn) {
+        IsbnToolsFactory.stripISBN = function(isbn) {
             // convert to uppercase, then remove hyphens and X
             return isbn.toUpperCase().replace(/[\-X]/g, '');
-        },
+        };
 
         /*
          * isISBN
          * Removes hyphens and X from given string, then returns true if result
          * has length 10 or 13.
          */
-        isISBN: function(isbn) {
+        IsbnToolsFactory.isISBN = function(isbn) {
             var stripped = isbn.toUpperCase().replace(/[\-X]/g, '');
             if (stripped.length == 10 || stripped.length == 13) return true;
             return false;
-        },
+        };
 
         /*
          * If you're not sure whether the input you've gotten is objectid or
          * docid, this function will return objectid if either objectid/docid
          * is the input.
          */
-        findObjectId: function(inputValue, callback) {
+        IsbnToolsFactory.findObjectId = function(inputValue, callback) {
             return $http.get('http://services.biblionaut.net/getids.php?id=' + inputValue)
             .success(function(data) {
                 callback(data);
             })
             .error(function(error) {
-                console.log('Error in isbnToolsFactory.findObjectId');
+                console.log('Error in IsbnToolsFactory.findObjectId');
             });
-        },
+        };
 
         /*
          * Will use an objectid to find isbn numbers.
          */
-        findISBNs: function(inputValue, callback) {
+        IsbnToolsFactory.findISBNs = function(inputValue, callback) {
             return $http.get('http://services.biblionaut.net/sru_iteminfo.php?id=' + inputValue)
             .success(function(data) {
                 callback(data);
             })
             .error(function(error) {
-                console.log('Error in isbnToolsFactory.findISBNs');
+                console.log('Error in IsbnToolsFactory.findISBNs');
             });
-        }
+        };
+
+        return IsbnToolsFactory;
 
     }
 
-});
+    // add it to our bookFactories module
+    angular
+        .module('bookFactories')
+        .factory('IsbnToolsFactory', IsbnToolsFactory);
 
-// functions that deal with our local database
-bookFactories.factory('DatabaseFactory', function($http) {
-    
-    var cachedDatabaseBooks;
-    
-    return {
 
+    // ------------------------------------------------------------------------
+
+
+    // DatabaseFactory will handle communication with our database
+    function DatabaseFactory($http) {
+        
+        DatabaseFactory.cachedDatabaseBooks = {};
+        
         // retrieves books from the database, and calls callback function
         // if successful
-        getDatabaseBooks: function(callback) {
+        DatabaseFactory.getDatabaseBooks = function(callback) {
             $http.get('api/books')
             .success(function(data) {
                 cachedDatabaseBooks = data;
@@ -119,85 +139,94 @@ bookFactories.factory('DatabaseFactory', function($http) {
             .error(function(error) {
                 console.log('Error in getDatabaseBooks.');
             });
-        },
+        };
 
         // save a book (pass in book data)
-        save : function(bookData) {
+        DatabaseFactory.save = function(bookData) {
             return $http({
                 method: 'POST',
                 url: 'api/books',
                 headers: { 'Content-Type' : 'application/x-www-form-urlencoded' },
                 data: $.param(bookData)
             });
-        },
+        };
 
         // remove a book from the database
-        destroy : function(id) {
+        DatabaseFactory.destroy = function(id) {
             return $http.delete('api/books/' + id);
-        }
+        };
 
+        return DatabaseFactory;
     }
-});
 
-// factory to store the information the user has selected about a book
-// before storing it in our database
-bookFactories.factory('InformationEditorFactory', function() {
+    // add it to our bookFactories module
+    angular
+        .module('bookFactories')
+        .factory('DatabaseFactory', DatabaseFactory);
 
-    var info = {
-        isbn: '',
-        image: '',
-        title: '',
-        author: '',
-        desc: ''
-    };
 
-    return {
+    // ------------------------------------------------------------------------
 
-        // function to get a referense to info
-        getInfo: function() {
-            return info;
-        },
+
+    // InformationEditorFactory will handle the information the user want to
+    // move on with after a search
+    function InformationEditorFactory() {
+
+        InformationEditorFactory.info = {
+            isbn: '',
+            image: '',
+            title: '',
+            author: '',
+            desc: ''
+        };
 
         // simple setter
-        setInfo: function(key, value) {
-            info[key] = value;
-        }
+        InformationEditorFactory.setInfo = function(key, value) {
+            InformationEditorFactory.info[key] = value;
+        };
+
+        return InformationEditorFactory;
 
     }
 
-})
+    // add it to our bookFactories module
+    angular
+        .module('bookFactories')
+        .factory('InformationEditorFactory', InformationEditorFactory);
 
-// factory to store search results
-bookFactories.factory('ApiResultsFactory', function() {
 
-    // here'll we'll add data as we fetch it
-    var cachedJson = {
-        isbn: [],
-        short_desc: [],
-        long_desc: [],
-        small_image: [],
-        medium_image: [],
-        large_image: [],
-        url: [],
-        authors: [],
-        title: [],
-        subtitle: []
-    };
+    // ------------------------------------------------------------------------
 
-    return {
+
+    // ApiResultsFactory will handle storing data we've found from a search
+    function ApiResultsFactory() {
+
+        // here'll we'll add data as we fetch it
+        ApiResultsFactory.cachedJson = {
+            isbn: [],
+            short_desc: [],
+            long_desc: [],
+            small_image: [],
+            medium_image: [],
+            large_image: [],
+            url: [],
+            authors: [],
+            title: [],
+            subtitle: []
+        };
 
         // this will receive data from the different APIs and store the data
         // for us. the function goes through the keys of the received object
         // and adds the values for each key in our cachedJson array (assuming
         // that the keys exist in the array) if not already there.
-        addResult: function(object) {
+        ApiResultsFactory.addResult = function(object) {
 
             // get keys
             var keys = Object.keys(object);
 
             // add results to our storage
             angular.forEach(keys, function(key) {
-                if (typeof cachedJson[key] === 'undefined') {
+                if (typeof ApiResultsFactory.cachedJson[key] === 'undefined') {
 
                     // if the API had started returning a resource we don't
                     // know about, log the resource name
@@ -207,56 +236,58 @@ bookFactories.factory('ApiResultsFactory', function() {
 
                     // otherwise we want to store this piece of data if we
                     // haven't already go it
-                    if (object[key] && cachedJson[key].indexOf(object[key]) === -1) {
-                        cachedJson[key].push(object[key]);
+                    if (object[key] && ApiResultsFactory.cachedJson[key].indexOf(object[key]) === -1) {
+                        ApiResultsFactory.cachedJson[key].push(object[key]);
                     }
 
                 }
             });
 
-            // console.log(cachedJson);
-
-        },
-
-        // get a reference to our array
-        cachedJsons: cachedJson,
+        };
 
         // remove data in the array (without creating a new array, because
         // that messes up the data bindings)
-        resetCachedJsons: function() {
-            cachedJson.isbn.length = 0;
-            cachedJson.short_desc.length = 0;
-            cachedJson.long_desc.length = 0;
-            cachedJson.small_image.length = 0;
-            cachedJson.medium_image.length = 0;
-            cachedJson.large_image.length = 0;
-            cachedJson.url.length = 0;
-            cachedJson.authors.length = 0;
-            cachedJson.title.length = 0;
-            cachedJson.subtitle.length = 0;
-        }
+        ApiResultsFactory.resetCachedJsons = function() {
+            ApiResultsFactory.cachedJson.isbn.length = 0;
+            ApiResultsFactory.cachedJson.short_desc.length = 0;
+            ApiResultsFactory.cachedJson.long_desc.length = 0;
+            ApiResultsFactory.cachedJson.small_image.length = 0;
+            ApiResultsFactory.cachedJson.medium_image.length = 0;
+            ApiResultsFactory.cachedJson.large_image.length = 0;
+            ApiResultsFactory.cachedJson.url.length = 0;
+            ApiResultsFactory.cachedJson.authors.length = 0;
+            ApiResultsFactory.cachedJson.title.length = 0;
+            ApiResultsFactory.cachedJson.subtitle.length = 0;
+        };
+
+        return ApiResultsFactory;
 
     }
 
-});
+    // add it to our bookFactories module
+    angular
+        .module('bookFactories')
+        .factory('ApiResultsFactory', ApiResultsFactory);
 
-// functions that deal with the metadata api
-bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactory) {
 
-    // apis to fetch data from
-    var urls = [
-        'http://services.biblionaut.net/metadata/bibsys.php',
-        'http://services.biblionaut.net/metadata/nielsen.php',
-        'http://services.biblionaut.net/metadata/google.php',
-        'http://services.biblionaut.net/metadata/openlibrary.php',
-        'http://services.biblionaut.net/metadata/isbndb.php',
-        'http://services.biblionaut.net/metadata/librarything.php',
-        'http://services.biblionaut.net/metadata/springer.php'
-    ];
+    // ------------------------------------------------------------------------
 
-    return {
 
-        getApiJson: function(isbnArray, callback) {
+    // MetaDataApiFactory will handle getting data from the metadata api
+    function MetaDataApiFactory($http, $q, ApiResultsFactory) {
+
+        // apis to fetch data from
+        MetaDataApiFactory.urls = [
+            'http://services.biblionaut.net/metadata/bibsys.php',
+            'http://services.biblionaut.net/metadata/nielsen.php',
+            'http://services.biblionaut.net/metadata/google.php',
+            'http://services.biblionaut.net/metadata/openlibrary.php',
+            'http://services.biblionaut.net/metadata/isbndb.php',
+            'http://services.biblionaut.net/metadata/librarything.php',
+            'http://services.biblionaut.net/metadata/springer.php'
+        ];
+
+        MetaDataApiFactory.getApiJson = function(isbnArray, callback) {
 
             // since we're getting an array of isbns here, join them separated
             // by commas since that's the format the metadata apis takes
@@ -281,7 +312,7 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
                     }
                 });
 
-            }
+            };
 
             // how long should we wait for each resource? the ajax request is
             // cancelled after this many seconds
@@ -294,7 +325,7 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
             var amountDone = 0;
 
             // start all requests
-            angular.forEach(urls, function(url) {
+            angular.forEach(MetaDataApiFactory.urls, function(url) {
 
                 $http({
                     method: 'get',
@@ -313,7 +344,7 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
 
                     amountDone++;
                     // if we're done with all resources, call callback function
-                    if (amountDone === urls.length) callback();
+                    if (amountDone === MetaDataApiFactory.urls.length) callback();
 
                 })
 
@@ -322,12 +353,20 @@ bookFactories.factory('MetaDataApiFactory', function($http, $q, ApiResultsFactor
                 
                     amountDone++;
                     // if we're done with all resources, call callback function
-                    if (amountDone === urls.length) callback();
+                    if (amountDone === MetaDataApiFactory.urls.length) callback();
                 
                 });
             });
 
-        }
+        };
 
-    };
-});
+        return MetaDataApiFactory;
+
+    }
+
+    // add it to our bookFactories module
+    angular
+        .module('bookFactories')
+        .factory('MetaDataApiFactory', MetaDataApiFactory);
+
+})();
