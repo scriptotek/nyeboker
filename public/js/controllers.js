@@ -48,97 +48,24 @@
         vm.error = false;
 
         // for debugging. default input value
-        vm.inputValue = '036051NA0';
+        vm.inputValue = '0-19-852663-6';
+        // vm.inputValue = '036051NA0';
 
-        // handle finding new books
-        vm.lookUpBook = function () {
+        // will be called after we've found isbn numbers
+        vm.movingOn = function(isbns) {
 
-            // remove stored results from previous search
-            ApiResultsFactory.resetCachedJsons();
+            console.log('Proceeding to the metadata api with isbns: ' + isbns);
+    
+            MetaDataApiFactory.getApiJson(isbns, function() {
+                $state.go('showJsonData.isbnSelector');
+            });
 
-            vm.loading = true;
+        };
 
-            // will be used when we're ready to fetch results. is it's own function
-            // to avoid duplicate code
-            var movingOn = function(isbns) {
-
-                // this will call all APIs set in the variable urls in
-                // MetaDataApiFactory:
-                // MetaDataApiFactory.getApiJson(isbns);
-                MetaDataApiFactory.getApiJson(isbns, function() {
-                    $state.go('showJsonData.isbnSelector');
-                });
-
-                // the calls to the APIs are not done yet, but we will
-                // move to the results page and add results to the view
-                // as they come
-                // $state.go('showJsonData');
-
-            };
-            
-            /*
-             * Set testing values for input so that you don't have to type in a
-             * valid isbn/objectid/knyttid every time
-             */
-            // vm.inputValue = '0-19-852663-6';
-            // vm.inputValue = '036051NA0';
-
-            /*
-             * The possibilities now:
-             * 
-             * 1) input is valid isbn:
-             *    we send it straight to movingOn with the isbn number
-             * 
-             * 2) input.length == 9 and assumed to be docid/objectid
-             *    we have to find isbn number(s) connected. since we're not
-             *    sure whether we have objectid or docid at this point, we'll
-             *    use IsbnToolsFactory.findObjectId to get the objectid. Then
-             *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
-             *    connected. Then we can use movingOn with the isbn numbers
-             *    we found
-             * 
-             *  3) invalid input. show error somewhere
-            */
-
-            if (IsbnToolsFactory.isISBN(vm.inputValue)) {
-
-                console.log('Input is ISBN.');
-                movingOn([vm.inputValue]);
-
-            } else if (vm.inputValue.length === 9) {
-
-                console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
-
-                IsbnToolsFactory.findObjectId(vm.inputValue, function(objektidData) {
-
-                    // did we find an objektid?
-                    if (objektidData.objektid) {
-
-                        // now try to find isbn numbers connected
-                        IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
-
-                            movingOn(isbnData.isbn);
-
-                        });
-
-                    } else {
-
-                        vm.loading = false;
-                        console.log('Invalid input.');
-                        vm.error = 'Invalid input.';
-
-                    }
-
-                });
-
-            } else {
-
-                vm.loading = false;
-                console.log('Invalid input.');
-                vm.error = 'Invalid input.';
-
-            }
-
+        // will check user input, get isbns from the input and then call
+        // movingOn above
+        vm.lookUpBook = function() {
+            return IsbnToolsFactory.lookUpBook(vm);
         };
 
         return vm;

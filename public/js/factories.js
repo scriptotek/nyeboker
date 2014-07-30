@@ -10,7 +10,79 @@
 
 
     // IsbnToolsFactory will handle isbn/dokid/objektid lookups and isbn stuff
-    function IsbnToolsFactory($http) {
+    function IsbnToolsFactory($http, ApiResultsFactory) {
+
+        /*
+         * Checks user input, gets isbns from the input and then calls
+         * movingOn which is defined in lookUpCtrl
+         */
+        IsbnToolsFactory.lookUpBook = function (vm) {
+
+            // remove stored results from previous search
+            ApiResultsFactory.resetCachedJsons();
+
+            vm.loading = true;
+
+            /*
+             * The possibilities now:
+             * 
+             * 1) input is valid isbn:
+             *    we send it straight to movingOn with the isbn number
+             * 
+             * 2) input.length == 9 and assumed to be docid/objectid
+             *    we have to find isbn number(s) connected. since we're not
+             *    sure whether we have objectid or docid at this point, we'll
+             *    use IsbnToolsFactory.findObjectId to get the objectid. Then
+             *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
+             *    connected. Then we can use movingOn with the isbn numbers
+             *    we found
+             * 
+             *  3) invalid input. show error somewhere
+            */
+
+            if (IsbnToolsFactory.isISBN(vm.inputValue)) {
+
+                console.log('Input seems to be ISBN. We can proceed to the metadata api.');
+                vm.movingOn([vm.inputValue]);
+
+            } else if (vm.inputValue.length === 9) {
+
+                console.log('Input seems to be docid/objectid (we don\'t know which). We\'ll try to find an objectid from the input.');
+
+                IsbnToolsFactory.findObjectId(vm.inputValue, function(objektidData) {
+
+                    // did we find an objektid?
+                    if (objektidData.objektid) {
+
+                        console.log('Objektid found: ' +
+                            objektidData.objektid);
+
+                        // now try to find isbn numbers connected
+                        IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
+
+                            vm.movingOn(isbnData.isbn);
+
+                        });
+
+                    } else {
+
+                        vm.loading = false;
+                        console.log('Invalid input.');
+                        vm.error = 'Invalid input.';
+
+                    }
+
+                });
+
+            } else {
+
+                vm.loading = false;
+                console.log('Invalid input.');
+                vm.error = 'Invalid input.';
+
+            }
+
+        };
 
         /*
          * Converts a isbn10 number into a isbn13.
@@ -323,7 +395,10 @@
             // a variable that counts how many resources are done, 
             // regardless of whether they succeeded or not. this is used so
             // that we know when we can redirect to the view that displays the
-            // results (the callback function does this)
+            // results (the callback function does this). an interesting "bug"
+            // in the metadata api is that it seems as if they'll give
+            // something back no matter what our search query (inputValue) is.
+            // therefore we don't do any validation on the data we get back. 
             var amountDone = 0;
 
             // start all requests
@@ -346,7 +421,9 @@
 
                     amountDone++;
                     // if we're done with all resources, call callback function
-                    if (amountDone === MetaDataApiFactory.urls.length) callback();
+                    if (amountDone === MetaDataApiFactory.urls.length) {
+                        callback();
+                    }
 
                 })
 
@@ -355,7 +432,9 @@
                 
                     amountDone++;
                     // if we're done with all resources, call callback function
-                    if (amountDone === MetaDataApiFactory.urls.length) callback();
+                    if (amountDone === MetaDataApiFactory.urls.length) {
+                        callback();
+                    }
                 
                 });
             });
