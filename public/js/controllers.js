@@ -1,243 +1,296 @@
-var bookControllers = angular.module('bookControllers', []);
+(function() {
 
-bookControllers.controller('showDatabaseBooksCtrl',
-    function ($scope, $rootScope, DatabaseFactory){
+    function showDatabaseBooksCtrl($scope, $rootScope, DatabaseFactory){
+
+        var vm = this;
 
         // show loading icon
-        $scope.loading = true;
+        vm.loading = true;
 
         // get books from database
         DatabaseFactory.getDatabaseBooks(function(data) {
-            // store results in model
-            $scope.booksFromDatabase = data;
+
+            // store results
+            vm.booksFromDatabase = data;
 
             // hide loading icon
-            $scope.loading = false;
+            vm.loading = false;
+
         });
-    });
 
-bookControllers.controller('lookUpCtrl', function ($scope, $state, MetaDataApiFactory, IsbnToolsFactory, ApiResultsFactory) {
+        return vm;
 
-    // for debugging. default input value
-    $scope.inputValue = '036051NA0';
+    }
 
-    // handle finding new books
-    $scope.lookUpBook = function () {
+    function lookUpCtrl($state, MetaDataApiFactory, IsbnToolsFactory, ApiResultsFactory) {
 
-        // remove stored results from previous search
-        ApiResultsFactory.resetCachedJsons();
+        var vm = this;
 
-        $scope.loading = true;
+        vm.loading = false;
+        vm.error = false;
 
-        // will be used when we're ready to fetch results. is it's own function
-        // to avoid duplicate code
-        var movingOn = function(isbns) {
+        // for debugging. default input value
+        vm.inputValue = '036051NA0';
 
-            // this will call all APIs set in the variable urls in
-            // MetaDataApiFactory:
-            // MetaDataApiFactory.getApiJson(isbns);
-            MetaDataApiFactory.getApiJson(isbns, function() {
-                $state.go('showJsonData.isbnSelector');
-            });
+        // handle finding new books
+        vm.lookUpBook = function () {
 
-            // the calls to the APIs are not done yet, but we will
-            // move to the results page and add results to the view
-            // as they come
-            // $state.go('showJsonData');
+            // remove stored results from previous search
+            ApiResultsFactory.resetCachedJsons();
+
+            vm.loading = true;
+
+            // will be used when we're ready to fetch results. is it's own function
+            // to avoid duplicate code
+            var movingOn = function(isbns) {
+
+                // this will call all APIs set in the variable urls in
+                // MetaDataApiFactory:
+                // MetaDataApiFactory.getApiJson(isbns);
+                MetaDataApiFactory.getApiJson(isbns, function() {
+                    $state.go('showJsonData.isbnSelector');
+                });
+
+                // the calls to the APIs are not done yet, but we will
+                // move to the results page and add results to the view
+                // as they come
+                // $state.go('showJsonData');
+
+            };
+            
+            /*
+             * Set testing values for input so that you don't have to type in a
+             * valid isbn/objectid/knyttid every time
+             */
+            // vm.inputValue = '0-19-852663-6';
+            // vm.inputValue = '036051NA0';
+
+            /*
+             * The possibilities now:
+             * 
+             * 1) input is valid isbn:
+             *    we send it straight to movingOn with the isbn number
+             * 
+             * 2) input.length == 9 and assumed to be docid/objectid
+             *    we have to find isbn number(s) connected. since we're not
+             *    sure whether we have objectid or docid at this point, we'll
+             *    use IsbnToolsFactory.findObjectId to get the objectid. Then
+             *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
+             *    connected. Then we can use movingOn with the isbn numbers
+             *    we found
+             * 
+             *  3) invalid input. show error somewhere
+            */
+
+            if (IsbnToolsFactory.isISBN(vm.inputValue)) {
+
+                console.log('Input is ISBN.');
+                movingOn([vm.inputValue]);
+
+            } else if (vm.inputValue.length === 9) {
+
+                console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
+
+                IsbnToolsFactory.findObjectId(vm.inputValue, function(objektidData) {
+
+                    // did we find an objektid?
+                    if (objektidData.objektid) {
+
+                        // now try to find isbn numbers connected
+                        IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
+
+                            movingOn(isbnData.isbn);
+
+                        });
+
+                    } else {
+
+                        vm.loading = false;
+                        console.log('Invalid input.');
+                        vm.error = 'Invalid input.';
+
+                    }
+
+                });
+
+            } else {
+
+                vm.loading = false;
+                console.log('Invalid input.');
+                vm.error = 'Invalid input.';
+
+            }
+
+        };
+
+        return vm;
+
+    }
+
+    function showJsonDataCtrl(ApiResultsFactory){
+
+        var vm = this;
+
+        vm.error = false;
+
+        vm.cachedJson = ApiResultsFactory.cachedJsons;
+
+        // show error message if we haven't made a search
+        if (vm.cachedJson.isbn.length === 0) {
+
+            vm.error = 'You have to make a search before seeing anything here. Click "Look Up New Book" in the menu above.';
 
         }
 
-
-        // get input value
-        var inputValue = $scope.inputValue;
-        
-        /*
-         * Set testing values for input so that you don't have to type in a
-         * valid isbn/objectid/knyttid every time
-         */
-        // inputValue = '0-19-852663-6';
-        // inputValue = '036051NA0';
-
-        /*
-         * The possibilities now:
-         * 
-         * 1) input is valid isbn:
-         *    we send it straight to movingOn with the isbn number
-         * 
-         * 2) input.length == 9 and assumed to be docid/objectid
-         *    we have to find isbn number(s) connected. since we're not
-         *    sure whether we have objectid or docid at this point, we'll
-         *    use IsbnToolsFactory.findObjectId to get the objectid. Then
-         *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
-         *    connected. Then we can use movingOn with the isbn numbers
-         *    we found
-         * 
-         *  3) invalid input. show error somewhere
-        */
-
-        if (IsbnToolsFactory.isISBN(inputValue)) {
-
-            console.log('Input is ISBN.');
-            movingOn([inputValue]);
-
-        } else if (inputValue.length === 9) {
-
-            console.log('Input seems to be docid/objectid. Try to find objectid from the input:');
-
-            IsbnToolsFactory.findObjectId(inputValue, function(objektidData) {
-
-                // did we find an objektid?
-                if (objektidData.objektid) {
-
-                    // now try to find isbn numbers connected
-                    IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
-
-                        movingOn(isbnData.isbn);
-
-                    });
-
-                } else {
-
-                    $scope.loading = false;
-                    console.log('Invalid input.');
-                    $scope.error = 'Invalid input.';
-
-                }
-
-            });
-
-        } else {
-
-            $scope.loading = false;
-            console.log('Invalid input.');
-            $scope.error = 'Invalid input.';
-
-        }
+        return vm;
 
     }
 
-});
+    function isbnSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
-bookControllers.controller('showJsonDataCtrl', function ($scope, ApiResultsFactory){
+        var vm = this;
 
-    $scope.error = null;
+        // reference to search results
+        var cachedJson = ApiResultsFactory.cachedJsons;
+        vm.isbns = cachedJson.isbn;
 
-    $scope.cachedJson = ApiResultsFactory.cachedJsons;
+        // reference to stored search results
+        var info = InformationEditorFactory.getInfo();
 
-    // show error message if we haven't made a search
-    if ($scope.cachedJson.isbn.length === 0) {
-        $scope.error = 'You have to make a search before seeing anything here. Click "Look Up New Book" in the menu above.';
+        // get the isbn already selected
+        vm.selectedIsbn = info.isbn;
+
+        // if the user wants to move on with this piece of data
+        vm.selectThis = function(index) {
+            InformationEditorFactory.setInfo('isbn', vm.isbns[index]);
+            vm.selectedIsbn = vm.isbns[index];
+        };
+
+        return vm;
+
     }
 
-});
+    function imageSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
-bookControllers.controller('isbnSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
+        var vm = this;
 
-    // reference to search results
-    var cachedJson = ApiResultsFactory.cachedJsons;
-    $scope.isbns = cachedJson.isbn;
+        var cachedJson = ApiResultsFactory.cachedJsons;
+        vm.allImages = [];
+        vm.allImages =
+            vm.allImages
+            .concat(cachedJson.small_image)
+            .concat(cachedJson.medium_image)
+            .concat(cachedJson.large_image);
 
-    // reference to stored search results
-    var info = InformationEditorFactory.getInfo();
+        // reference to stored search results
+        var info = InformationEditorFactory.getInfo();
 
-    // get the isbn already selected
-    $scope.selectedIsbn = info.isbn;
+        // get the isbn already selected
+        vm.selectedImg = info.image;
 
-    // if the user wants to move on with this piece of data
-    $scope.selectThis = function(index) {
-        InformationEditorFactory.setInfo('isbn', $scope.isbns[index]);
-        $scope.selectedIsbn = $scope.isbns[index];
+        // if the user wants to move on with this piece of data
+        vm.selectThis = function(index) {
+            InformationEditorFactory.setInfo('image', vm.allImages[index]);
+            vm.selectedImg = vm.allImages[index];
+        };
+
+        return vm;
+
     }
 
-});
+    function titleSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
-bookControllers.controller('imageSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
+        var vm = this;
 
-    var cachedJson = ApiResultsFactory.cachedJsons;
-    $scope.allImages = [];
-    $scope.allImages =
-        $scope.allImages
-        .concat(cachedJson.small_image)
-        .concat(cachedJson.medium_image)
-        .concat(cachedJson.large_image);
+        var cachedJson = ApiResultsFactory.cachedJsons;
+        vm.titles = cachedJson.title;
 
-    // reference to stored search results
-    var info = InformationEditorFactory.getInfo();
+        // reference to stored search results
+        var info = InformationEditorFactory.getInfo();
 
-    // get the isbn already selected
-    $scope.selectedImg = info.image;
+        // get the title already selected
+        vm.selectedTitle = info.title;
 
-    // if the user wants to move on with this piece of data
-    $scope.selectThis = function(index) {
-        InformationEditorFactory.setInfo('image', $scope.allImages[index]);
-        $scope.selectedImg = $scope.allImages[index];
+        // if the user wants to move on with this piece of data
+        vm.selectThis = function(index) {
+            InformationEditorFactory.setInfo('title', vm.titles[index]);
+            vm.selectedTitle = vm.titles[index];
+        };
+
+        return vm;
+
     }
 
-});
+    function authorSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
-bookControllers.controller('titleSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
+        var vm = this;
 
-    var cachedJson = ApiResultsFactory.cachedJsons;
-    $scope.titles = cachedJson.title;
+        var cachedJson = ApiResultsFactory.cachedJsons;
+        vm.authors = cachedJson.authors;
 
-    // reference to stored search results
-    var info = InformationEditorFactory.getInfo();
+        // reference to stored search results
+        var info = InformationEditorFactory.getInfo();
 
-    // get the title already selected
-    $scope.selectedTitle = info.title;
+        // get the author already selected
+        vm.selectedAuthor = info.author;
 
-    // if the user wants to move on with this piece of data
-    $scope.selectThis = function(index) {
-        InformationEditorFactory.setInfo('title', $scope.titles[index]);
-        $scope.selectedTitle = $scope.titles[index];
+        // if the user wants to move on with this piece of data
+        vm.selectThis = function(index) {
+            InformationEditorFactory.setInfo('author', vm.authors[index]);
+            vm.selectedAuthor = vm.authors[index];
+        };
+
+        return vm;
+
     }
 
-});
+    function descriptionSelectorCtrl(ApiResultsFactory, InformationEditorFactory) {
 
-bookControllers.controller('authorSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
+        var vm = this;
 
-    var cachedJson = ApiResultsFactory.cachedJsons;
-    $scope.authors = cachedJson.authors;
+        var cachedJson = ApiResultsFactory.cachedJsons;
+        vm.allDescriptions = [];
+        vm.allDescriptions =
+            vm.allDescriptions
+            .concat(cachedJson.short_desc)
+            .concat(cachedJson.long_desc);
 
-    // reference to stored search results
-    var info = InformationEditorFactory.getInfo();
+        // reference to stored search results
+        var info = InformationEditorFactory.getInfo();
 
-    // get the author already selected
-    $scope.selectedAuthor = info.author;
+        // get the description already selected
+        vm.selectedDesc = info.desc;
 
-    // if the user wants to move on with this piece of data
-    $scope.selectThis = function(index) {
-        InformationEditorFactory.setInfo('author', $scope.authors[index]);
-        $scope.selectedAuthor = $scope.authors[index];
+        // if the user wants to move on with this piece of data
+        vm.selectThis = function(index) {
+            InformationEditorFactory.setInfo('desc', vm.allDescriptions[index]);
+            vm.selectedDesc = vm.allDescriptions[index];
+        };
+
+        return vm;
+
     }
 
-});
+    function informationEditorCtrl(InformationEditorFactory) {
 
-bookControllers.controller('descriptionSelectorCtrl', function($scope, ApiResultsFactory, InformationEditorFactory) {
+        var vm = this;
 
-    var cachedJson = ApiResultsFactory.cachedJsons;
-    $scope.allDescriptions = [];
-    $scope.allDescriptions =
-        $scope.allDescriptions
-        .concat(cachedJson.short_desc)
-        .concat(cachedJson.long_desc);
+        var info = InformationEditorFactory.getInfo();
 
-    // reference to stored search results
-    var info = InformationEditorFactory.getInfo();
+        return vm;
 
-    // get the description already selected
-    $scope.selectedDesc = info.desc;
-
-    // if the user wants to move on with this piece of data
-    $scope.selectThis = function(index) {
-        InformationEditorFactory.setInfo('desc', $scope.allDescriptions[index]);
-        $scope.selectedDesc = $scope.allDescriptions[index];
     }
 
-});
+    var bookControllers = angular
+        .module('bookControllers', [])
+        .controller('showDatabaseBooksCtrl', showDatabaseBooksCtrl)
+        .controller('lookUpCtrl', lookUpCtrl)
+        .controller('showJsonDataCtrl', showJsonDataCtrl)
+        .controller('isbnSelectorCtrl', isbnSelectorCtrl)
+        .controller('imageSelectorCtrl', imageSelectorCtrl)
+        .controller('titleSelectorCtrl', titleSelectorCtrl)
+        .controller('authorSelectorCtrl', authorSelectorCtrl)
+        .controller('descriptionSelectorCtrl', descriptionSelectorCtrl)
+        .controller('informationEditorCtrl', informationEditorCtrl);
 
-bookControllers.controller('informationEditorCtrl', function($scope, InformationEditorFactory) {
-
-    var info = InformationEditorFactory.getInfo();
-
-});
+})();

@@ -1,5 +1,5 @@
 <!-- hide books if the loading variable is set to true -->
-<div class="book" ng-hide="loading" ng-repeat="book in booksFromDatabase">
+<div class="book" ng-hide="loading" ng-repeat="book in showDatabaseBooksCtrl.booksFromDatabase">
 	<h3>Book #{{ book.id }} <small>av {{ book.authors }}</h3>
 	<p>{{ book.dokid }}</p>
 
@@ -7,4 +7,4 @@
 </div>
 
 <!-- show loading spinner if the books are still loading -->
-<loadingspinner></loadingspinner>
+<loadingspinner ng-show="showDatabaseBooksCtrl.loading"></loadingspinner>

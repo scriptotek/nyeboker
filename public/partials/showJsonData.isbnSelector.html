@@ -4,18 +4,18 @@
 
 	<button
 		type="button"
-		ng-repeat="isbn in isbns"
-		ng-show="isbns"
+		ng-repeat="isbn in isbnSelectorCtrl.isbns"
+		ng-show="isbnSelectorCtrl.isbns"
 		class="btn btn-default btn-block"
 		ng-class="{buttonSelected: isbn === 
-		selectedIsbn}"
+		isbnSelectorCtrl.selectedIsbn}"
 		ng-model="isbn"
 		ng-value="isbn"
-		ng-click="selectThis($index)">
+		ng-click="isbnSelectorCtrl.selectThis($index)">
 		{{isbn}}
 	</button>
 
-	<small ng-show="!isbns.length">
+	<small ng-show="!isbnSelectorCtrl.isbns.length">
 		(none found)
 	</small>
 

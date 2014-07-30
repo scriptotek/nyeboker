@@ -4,20 +4,18 @@
 
 	<button
 		type="button"
-		ng-repeat="img in allImages"
-		ng-show="allImages"
+		ng-repeat="img in imageSelectorCtrl.allImages"
+		ng-show="imageSelectorCtrl.allImages"
 		class="btn btn-default btn-block"
 		ng-class="{buttonSelected: img === 
-		selectedImg}"
+		imageSelectorCtrl.selectedImg}"
 		ng-model="img"
 		ng-value="img"
-		ng-click="selectThis($index)">
-		<img ng-src="{{img}}" alt="" class="imgSize">
-		<br>
-		(123x123)
+		ng-click="imageSelectorCtrl.selectThis($index)">
+		<img ng-src="{{img}}" alt="" class="imgSize"><br>(123x123)
 	</button>
 
-	<small ng-show="!allImages.length">
+	<small ng-show="!imageSelectorCtrl.allImages.length">
 		(none found)
 	</small>
 

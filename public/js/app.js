@@ -15,62 +15,72 @@ bookApp.config(function($stateProvider, $urlRouterProvider) {
         .state('lookUp', {
             url: '/lookUp',
             templateUrl: 'partials/lookUp.html',
-            controller: 'lookUpCtrl'
+            controller: 'lookUpCtrl',
+            controllerAs: 'lookUpCtrl'
         })
         .state('showDatabaseBooks', {
             url: '/showDatabaseBooks',
             templateUrl: 'partials/showDatabaseBooks.html',
-            controller: 'showDatabaseBooksCtrl'
+            controller: 'showDatabaseBooksCtrl',
+            controllerAs: 'showDatabaseBooksCtrl'
         })
         .state('showJsonData', {
             url: '/showJsonData',
             templateUrl: 'partials/showJsonData.html',
-            controller: 'showJsonDataCtrl'
+            controller: 'showJsonDataCtrl',
+            controllerAs: 'showJsonDataCtrl'
         })
         .state('showJsonData.isbnSelector', {
             url: '/isbnSelector',
             templateUrl: 'partials/showJsonData.isbnSelector.html',
-            controller: 'isbnSelectorCtrl'
+            controller: 'isbnSelectorCtrl',
+            controllerAs: 'isbnSelectorCtrl'
         })
         .state('showJsonData.imageSelector', {
             url: '/imageSelector',
             templateUrl: 'partials/showJsonData.imageSelector.html',
-            controller: 'imageSelectorCtrl'
+            controller: 'imageSelectorCtrl',
+            controllerAs: 'imageSelectorCtrl'
         })
         .state('showJsonData.titleSelector', {
             url: '/titleSelector',
             templateUrl: 'partials/showJsonData.titleSelector.html',
-            controller: 'titleSelectorCtrl'
+            controller: 'titleSelectorCtrl',
+            controllerAs: 'titleSelectorCtrl'
         })
         .state('showJsonData.authorSelector', {
             url: '/authorSelector',
             templateUrl: 'partials/showJsonData.authorSelector.html',
-            controller: 'authorSelectorCtrl'
+            controller: 'authorSelectorCtrl',
+            controllerAs: 'authorSelectorCtrl'
         })
         .state('showJsonData.descriptionSelector', {
             url: '/descriptionSelector',
             templateUrl: 'partials/showJsonData.descriptionSelector.html',
-            controller: 'descriptionSelectorCtrl'
+            controller: 'descriptionSelectorCtrl',
+            controllerAs: 'descriptionSelectorCtrl'
         })
         .state('showJsonData.informationEditor', {
             url: '/informationEditor',
             templateUrl: 'partials/showJsonData.informationEditor.html',
-            controller: 'informationEditorCtrl'
-        })
+            controller: 'informationEditorCtrl',
+            controllerAs: 'informationEditorCtrl'
+        });
 });
 
 bookApp.directive("loadingspinner", function() {
     return {
         restrict: 'E',
-        template: '<p class="text-center" ng-show="loading"><span class="fa fa-meh-o fa-5x fa-spin"></span></p>'
-    }
+        template: '<p class="text-center"><span class="fa fa-meh-o fa-5x fa-spin"></span></p>'
+    };
 });
 
 bookApp.directive("errormessage", function() {
     return {
         restrict: 'E',
-        template: '<div class="alert alert-danger" ng-show="error">{{error}}</div>'
-    }
+        template: '<div class="alert alert-danger" ng-transclude></div>',
+        transclude: true
+    };
 });
 
 // directive used to determine whether an input field has focus. Then we can
@@ -93,7 +103,7 @@ bookApp.directive('cuFocus', function() {
                     });
                 });
         }
-    }
+    };
 });
 
 /*

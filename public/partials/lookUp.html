@@ -1,6 +1,6 @@
 <form
 	name="lookUpForm"
-	ng-submit="lookUpForm.$valid && lookUpBook()"
+	ng-submit="lookUpForm.$valid && lookUpCtrl.lookUpBook()"
 	novalidate>
 
 	<!-- -BOOK ID -->
@@ -15,7 +15,7 @@
 			type="text"
 			name="inputValue"
 			class="form-control input-lg"
-			ng-model="inputValue"
+			ng-model="lookUpCtrl.inputValue"
 			placeholder="Write isbn/dokid/objectid here"
 			ng-required="true"
 			ng-minlength=9
@@ -42,7 +42,7 @@
 </form>
 
 <!-- show loading spinner if we're still fetching data -->
-<loadingspinner></loadingspinner>
+<loadingspinner ng-show="lookUpCtrl.loading"></loadingspinner>
 
 <!-- show error if something went wrong -->
-<errormessage></errormessage>
+<errormessage ng-show="lookUpCtrl.error">{{lookUpCtrl.error}}</errormessage>
