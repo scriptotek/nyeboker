@@ -21,11 +21,11 @@ class BookController extends \BaseController {
 	 */
 	public function store()
 	{
-		// lag no feiltesting her
-		// finnes boka fra før?
-		// fant vi ikke info om boka? den sjekken bør være i frontend
-		
-
+		/*
+		After submitting a book for saving in the frontend we get the json data
+		here. Lets check if all fields contains values, then save it. If some
+		fields are missing, give a fitting error message.
+		*/
 
 		Book::create(array(
 			'dokid' => Input::get('inputValue'),

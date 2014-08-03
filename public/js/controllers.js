@@ -263,11 +263,17 @@
     // ------------------------------------------------------------------------
 
 
-    function informationEditorCtrl(InformationEditorFactory) {
+    function informationEditorCtrl(InformationEditorFactory, DatabaseFactory) {
 
         var vm = this;
 
         vm.info = InformationEditorFactory.info;
+
+        vm.saveBook = function() {
+            console.log('Sending data to laravel:');
+            console.log(vm.info);
+            return DatabaseFactory.save(vm.info);
+        };
 
         return vm;
 

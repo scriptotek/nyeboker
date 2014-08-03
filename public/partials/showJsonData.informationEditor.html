@@ -1,5 +1,98 @@
 <div>
-	<p>
-		hey biatch
-	</p>
+
+	<h3>Edit book info</h4>
+
+	<form
+		name="informationEditorForm"
+		ng-submit="informationEditorForm.$valid && informationEditorCtrl.saveBook()"
+		novalidate>
+
+		<div class="control-group">
+			<label class="control-label" for="isbn">ISBN</label>
+			<div class="controls">
+				<input
+					size="50"
+					name="isbn"
+					type="text"
+					placeholder="Select an ISBN and it will appear here.."
+					required
+					ng-model="informationEditorCtrl.info.isbn">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="image">Image</label>
+			<div class="controls">
+				<img ng-src="{{informationEditorCtrl.info.image}}" alt="" class="imgSize">
+			</div>
+			<div class="controls">
+				<input
+					size="50"
+					name="image"
+					type="text"
+					placeholder="Select an image and it will appear here.."
+					required
+					ng-model="informationEditorCtrl.info.image">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="title">Title</label>
+			<div class="controls">
+				<input
+					size="50"
+					name="title"
+					type="text"
+					placeholder="Select an title and it will appear here.."
+					required
+					ng-model="informationEditorCtrl.info.title">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="author">Author</label>
+			<div class="controls">
+				<input
+					size="50"
+					name="author"
+					type="text"
+					placeholder="Select an author and it will appear here.."
+					required
+					ng-model="informationEditorCtrl.info.author">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label class="control-label" for="desc">Description</label>
+			<div class="controls">
+				<textarea
+					rows="10"
+					cols="80"
+					name="desc"
+					type="text"
+					placeholder="Select an desc and it will appear here.."
+					required
+					ng-model="informationEditorCtrl.info.desc"></textarea>
+			</div>
+		</div>
+
+		<!-- SUBMIT BUTTON -->
+		<div class="control-group text-right">
+
+			<button
+				class="btn btn-primary btn-lg"
+				ng-disabled="informationEditorForm.$invalid">
+				Save Book
+			</button>
+
+		</div>
+
+	</form>
+
 </div>
+
+<!-- show loading spinner if we've sent data to save and are waiting -->
+<loadingspinner ng-show="informationEditorCtrl.loading"></loadingspinner>
+
+<!-- show error if something went wrong -->
+<errormessage ng-show="informationEditorCtrl.error">{{informationEditorCtrl.error}}</errormessage>
