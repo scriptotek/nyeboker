@@ -11,7 +11,7 @@
 			<label class="control-label" for="isbn">ISBN</label>
 			<div class="controls">
 				<input
-					size="50"
+					class="form-control"
 					name="isbn"
 					type="text"
 					placeholder="Select an ISBN and it will appear here.."
@@ -21,18 +21,18 @@
 		</div>
 
 		<div class="control-group">
-			<label class="control-label" for="image">Image</label>
-			<div class="controls">
-				<img ng-src="{{informationEditorCtrl.info.image}}" alt="" class="imgSize">
-			</div>
+			<label class="control-label" for="image">Link to image</label>
 			<div class="controls">
 				<input
-					size="50"
+					class="form-control"
 					name="image"
 					type="text"
-					placeholder="Select an image and it will appear here.."
+					placeholder="Select an image and its link will appear here.."
 					required
 					ng-model="informationEditorCtrl.info.image">
+			</div>
+			<div class="controls">
+				<img ng-src="{{informationEditorCtrl.info.image}}" alt="" class="imgSize">
 			</div>
 		</div>
 
@@ -40,10 +40,10 @@
 			<label class="control-label" for="title">Title</label>
 			<div class="controls">
 				<input
-					size="50"
+					class="form-control"
 					name="title"
 					type="text"
-					placeholder="Select an title and it will appear here.."
+					placeholder="Select a title and it will appear here.."
 					required
 					ng-model="informationEditorCtrl.info.title">
 			</div>
@@ -53,7 +53,7 @@
 			<label class="control-label" for="author">Author</label>
 			<div class="controls">
 				<input
-					size="50"
+					class="form-control"
 					name="author"
 					type="text"
 					placeholder="Select an author and it will appear here.."
@@ -63,14 +63,26 @@
 		</div>
 
 		<div class="control-group">
+			<label class="control-label" for="category">Category</label>
+			<div class="controls">
+				<select
+					class="form-control"
+					name="category"
+					required
+					ng-options="category for category in informationEditorCtrl.categories"
+					ng-model="informationEditorCtrl.info.cat"></select>
+			</div>
+		</div>
+
+		<div class="control-group">
 			<label class="control-label" for="desc">Description</label>
 			<div class="controls">
 				<textarea
+					class="form-control"
 					rows="10"
-					cols="80"
 					name="desc"
 					type="text"
-					placeholder="Select an desc and it will appear here.."
+					placeholder="Select a description and it will appear here.."
 					required
 					ng-model="informationEditorCtrl.info.desc"></textarea>
 			</div>

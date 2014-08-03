@@ -58,7 +58,7 @@
 			<a ui-sref="index">Home</a> - 
 			<a ui-sref="lookUp">Look Up New Book</a> - 
 			<a ui-sref="showDatabaseBooks">Show stored books</a> - 
-			<a ui-sref="showJsonData">Show search results</a>
+			<a ui-sref="showJsonData.isbnSelector">Show search results</a>
 		</div>
 
 		<!-- load our views -->

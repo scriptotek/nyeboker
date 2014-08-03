@@ -227,7 +227,15 @@
 
         // remove a book from the database
         DatabaseFactory.destroy = function(id) {
+            console.log('in DatabaseFactory.destroy');
             return $http.delete('api/books/' + id);
+        };
+
+        // choose to display/not display a book
+        DatabaseFactory.toggleDisplay = function(id, newValue) {
+            console.log('in DatabaseFactory.toggleDisplay');
+            // continue here when you understand how to handle put requests in laravel
+            //return $http.put('api/books/' + id);
         };
 
         return DatabaseFactory;
@@ -251,7 +259,8 @@
             image: '',
             title: '',
             author: '',
-            desc: ''
+            desc: '',
+            cat: ''
         };
 
         // simple setter
@@ -286,7 +295,16 @@
             url: [],
             authors: [],
             title: [],
-            subtitle: []
+            subtitle: [],
+            categories: [
+                'Matematikk',
+                'Geografi',
+                'Astronomi',
+                'Biologi',
+                'Fysikk',
+                'Kjemi',
+                'Informatikk',
+                'Farmasi']
         };
 
         // this will receive data from the different APIs and store the data

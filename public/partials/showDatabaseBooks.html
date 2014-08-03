@@ -1,9 +1,24 @@
 <!-- hide books if the loading variable is set to true -->
 <div class="book" ng-hide="loading" ng-repeat="book in showDatabaseBooksCtrl.booksFromDatabase">
-	<h3>Book #{{ book.id }} <small>av {{ book.authors }}</h3>
-	<p>{{ book.dokid }}</p>
+	<h3>{{ book.title }} <small>av {{ book.author }}</h3>
+	<p>{{ book.desc }}</p>
 
-	<p><a href="#" ng-click="deleteBook(book.id)" class="text-muted">Delete</a></p>
+	<p>
+		<button
+			type="button"
+			class="btn btn-default"
+			ng-class="{buttonSelected: book.displayed}"
+			ng-click="showDatabaseBooksCtrl.toggleDisplay(book.id)">
+			Display
+		</button>
+		<button
+			type="button"
+			class="btn btn-danger"
+			ng-click="showDatabaseBooksCtrl.deleteBook(book.id)">
+			Delete
+		</button>
+	</p>
+	
 </div>
 
 <!-- show loading spinner if the books are still loading -->

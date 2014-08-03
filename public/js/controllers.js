@@ -27,6 +27,44 @@
 
         });
 
+        // handler for delete
+        vm.deleteBook = function(id) {
+            console.log('Trying to delete id ' + id);
+            return DatabaseFactory.destroy(id);
+        };
+
+        // handler for toggle display
+        vm.toggleDisplay = function(id) {
+
+            console.log('Trying to toggle display on id ' + id);
+            
+            /*
+            we want to do two things here:
+            1) update the displayed value of this book in vm.booksFromDatabase
+            2) update the displayed value of this book in the database itself
+            */
+
+            // 1)
+            // go through all books and update the displayed value
+            angular.forEach(vm.booksFromDatabase, function(book) {
+
+                if (book.id === id) {
+
+                    if (book.displayed === 0) book.displayed = 1;
+                    else book.displayed = 0;
+                    console.log('yes! we edited displayed');
+                    // 2)
+                    DatabaseFactory.toggleDisplay(id, book.displayed);
+
+                }
+                
+            });
+
+            
+            return DatabaseFactory.toggleDisplay(id);
+
+        };
+
         return vm;
 
     }
@@ -262,12 +300,23 @@
 
     // ------------------------------------------------------------------------
 
-
     function informationEditorCtrl(InformationEditorFactory, DatabaseFactory) {
 
         var vm = this;
 
         vm.info = InformationEditorFactory.info;
+
+        vm.categories = [
+            'Matematikk',
+            'Geografi',
+            'Astronomi',
+            'Biologi',
+            'Fysikk',
+            'Kjemi',
+            'Informatikk',
+            'Farmasi'];
+        // set a default value for category
+        vm.info.cat = vm.categories[0];
 
         vm.saveBook = function() {
             console.log('Sending data to laravel:');
