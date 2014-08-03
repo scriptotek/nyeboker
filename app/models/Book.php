@@ -15,7 +15,12 @@ class Book extends Eloquent
 	
 	// let eloquent know that these attributes will be available for mass
 	// assignment
-	protected $fillable = array('dokid', 'objektid', 'isbn', 'title',
-		'authors', 'cover');
+	protected $fillable = array(
+		'isbn',
+		'image',
+		'title',
+		'author',
+		'desc',
+		'cat');
 
 } // END class Book

@@ -28,12 +28,12 @@ class BookController extends \BaseController {
 		*/
 
 		Book::create(array(
-			'dokid' => Input::get('inputValue'),
-			'objektid' => Input::get('inputValue'),
-			'isbn' => Input::get('inputValue'),
-			'title' => Input::get('inputValue'),
-			'authors' => Input::get('inputValue'),
-			'cover' => Input::get('inputValue'),
+			'isbn' => Input::get('isbn'),
+			'image' => Input::get('image'),
+			'title' => Input::get('title'),
+			'author' => Input::get('author'),
+			'desc' => Input::get('desc'),
+			'cat' => Input::get('cat'),
 		));
 
 		return Response::json(array('success' => true));
