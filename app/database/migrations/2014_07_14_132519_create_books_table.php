@@ -16,12 +16,21 @@ class CreateBooksTable extends Migration {
 		{
 			$table->increments('id');
 
-			$table->string('dokid');
-			$table->string('objektid');
 			$table->string('isbn');
+			$table->string('image');
 			$table->string('title');
-			$table->string('authors');
-			$table->string('cover');
+			$table->string('author');
+			$table->string('desc');
+			$table->enum('cat', array(
+				'Matematikk',
+				'Geografi',
+				'Astronomi',
+				'Biologi',
+				'Fysikk',
+				'Kjemi',
+				'Informatikk',
+				'Farmasi'));
+			$table->boolean('displayed')->default(0);
 
 			$table->timestamps();
 		});
