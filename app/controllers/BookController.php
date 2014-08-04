@@ -22,9 +22,7 @@ class BookController extends \BaseController {
 	public function store()
 	{
 		/*
-		After submitting a book for saving in the frontend we get the json data
-		here. Lets check if all fields contains values, then save it. If some
-		fields are missing, give a fitting error message.
+		add validatino bro. first learn to spell
 		*/
 
 		Book::create(array(
@@ -56,6 +54,9 @@ class BookController extends \BaseController {
 
 	/**
 	 * Edit a book. Well not really. Just update value of displayed.
+	 * 
+	 * NOTE: This should be updated with validation and so that it can edit
+	 * everything about the book.
 	 *
 	 * @param  int  $id
 	 * @return Response
