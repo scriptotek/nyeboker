@@ -29,14 +29,14 @@
 
         // handler for delete
         vm.deleteBook = function(id) {
-            console.log('Trying to delete id ' + id);
+            // console.log('Trying to delete id ' + id);
             return DatabaseFactory.destroy(id);
         };
 
         // handler for toggle display
         vm.toggleDisplay = function(id) {
 
-            console.log('Trying to toggle display on id ' + id);
+            // console.log('Trying to toggle display on id ' + id);
             
             /*
             we want to do two things here:
@@ -52,9 +52,12 @@
 
                     if (book.displayed === 0) book.displayed = 1;
                     else book.displayed = 0;
-                    console.log('yes! we edited displayed');
+
                     // 2)
-                    DatabaseFactory.toggleDisplay(id, book.displayed);
+                    DatabaseFactory.toggleDisplay(id, book.displayed)
+                    .then(function(data) {
+                        console.log('Display toggled for book id: ' + id);
+                    });
 
                 }
                 

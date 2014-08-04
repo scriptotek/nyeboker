@@ -54,4 +54,23 @@ class BookController extends \BaseController {
 	}
 
 
+	/**
+	 * Edit a book. Well not really. Just update value of displayed.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		$book = Book::find($id);
+		$book->displayed = Input::get('displayed');
+
+		if ($book->save()) {
+			return Response::json(array('success' => true));
+		}
+
+		return Response::json(array('success' => false));
+	}
+
+
 }

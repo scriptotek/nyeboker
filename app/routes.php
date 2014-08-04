@@ -25,7 +25,7 @@ Route::group(array('prefix' => 'api'), function () {
 	// edit. Angular will handle both of those forms. This ensures that a user
 	// can't access api/create or api/edit when there's nothing there
 	Route::resource('books', 'BookController',
-		array('only' => array('index', 'store', 'destroy')));
+		array('only' => array('index', 'store', 'destroy', 'update')));
 });
 
 // CATCH ALL ROUTE

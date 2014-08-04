@@ -231,11 +231,20 @@
             return $http.delete('api/books/' + id);
         };
 
+        // update info about a book
+        DatabaseFactory.update = function(id, data) {
+            return $http.put('api/books/' + id, data);
+        };
+
         // choose to display/not display a book
         DatabaseFactory.toggleDisplay = function(id, newValue) {
             console.log('in DatabaseFactory.toggleDisplay');
-            // continue here when you understand how to handle put requests in laravel
-            //return $http.put('api/books/' + id);
+
+            var data = {
+                displayed: newValue
+            };
+
+            return DatabaseFactory.update(id, data);
         };
 
         return DatabaseFactory;
