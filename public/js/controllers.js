@@ -304,7 +304,7 @@
 
     // ------------------------------------------------------------------------
 
-    function informationEditorCtrl($state, InformationEditorFactory, DatabaseFactory) {
+    function informationEditorCtrl($state, InformationEditorFactory, DatabaseFactory, ApiResultsFactory) {
 
         var vm = this;
 
@@ -326,6 +326,9 @@
 
             console.log('Sending data to laravel:');
             console.log(vm.info);
+
+            // remove search results
+            ApiResultsFactory.resetCachedJsons();
 
             // save and redirect to showDatabaseBooks on success
             DatabaseFactory.save(vm.info)
