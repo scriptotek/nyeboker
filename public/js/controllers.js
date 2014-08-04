@@ -9,7 +9,7 @@
     // ------------------------------------------------------------------------
 
 
-    function showDatabaseBooksCtrl($scope, $rootScope, DatabaseFactory){
+    function showDatabaseBooksCtrl(DatabaseFactory){
 
         var vm = this;
 
@@ -17,13 +17,28 @@
         vm.loading = true;
 
         // get books from database
-        DatabaseFactory.getDatabaseBooks(function(data) {
+        DatabaseFactory.getDatabaseBooks()
+        .success(function(data) {
 
-            // store results
+            // store results in this view
             vm.booksFromDatabase = data;
+
+            // store results in our factory
+            DatabaseFactory.booksFromDatabase = data;
 
             // hide loading icon
             vm.loading = false;
+
+        })
+        .error(function(error) {
+
+            console.log(error);
+
+            // hide loading icon
+            vm.loading = false;
+
+            vm.error = 'Could not retrieve books.';
+            console.log(vm.error);
 
         });
 
@@ -35,37 +50,23 @@
 
         // handler for toggle display
         vm.toggleDisplay = function(id) {
+            return DatabaseFactory.toggleDisplay(id);
+        };
 
-            // console.log('Trying to toggle display on id ' + id);
-            
-            /*
-            we want to do two things here:
-            1) update the displayed value of this book in vm.booksFromDatabase
-            2) update the displayed value of this book in the database itself
-            */
+        // handler for generating json for webdav->vortex
+        vm.generateJson = function() {
 
-            // 1)
-            // go through all books and update the displayed value
+            // holder for books to be exported
+            var booksToExport = [];
+
+            // go through each book from the database and add each which has a
+            // display === 1 to the holder array
             angular.forEach(vm.booksFromDatabase, function(book) {
-
-                if (book.id === id) {
-
-                    if (book.displayed === 0) book.displayed = 1;
-                    else book.displayed = 0;
-
-                    // 2)
-                    DatabaseFactory.toggleDisplay(id, book.displayed)
-                    .then(function(data) {
-                        console.log('Display toggled for book id: ' + id);
-                    });
-
-                }
-                
+                if (book.displayed === 1) booksToExport.push(book);
             });
 
-            
-            return DatabaseFactory.toggleDisplay(id);
-
+            // send bookstoexport to webdav script here
+            console.log(booksToExport);
         };
 
         return vm;
@@ -89,8 +90,8 @@
         vm.error = false;
 
         // for debugging. default input value
-        vm.inputValue = '0-19-852663-6';
-        // vm.inputValue = '036051NA0';
+        // vm.inputValue = '0-19-852663-6';
+        vm.inputValue = '036051NA0';
 
         // will be called after we've found isbn numbers
         vm.movingOn = function(isbns) {
@@ -303,7 +304,7 @@
 
     // ------------------------------------------------------------------------
 
-    function informationEditorCtrl(InformationEditorFactory, DatabaseFactory) {
+    function informationEditorCtrl($state, InformationEditorFactory, DatabaseFactory) {
 
         var vm = this;
 
@@ -322,9 +323,16 @@
         vm.info.cat = vm.categories[0];
 
         vm.saveBook = function() {
+
             console.log('Sending data to laravel:');
             console.log(vm.info);
-            return DatabaseFactory.save(vm.info);
+
+            // save and redirect to showDatabaseBooks on success
+            DatabaseFactory.save(vm.info)
+            .success(function() {
+                $state.go('showDatabaseBooks');
+            });
+
         };
 
         return vm;

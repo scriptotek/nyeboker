@@ -57,8 +57,8 @@
 			<h4>Book Registration System</h4>
 			<a ui-sref="index">Home</a> - 
 			<a ui-sref="lookUp">Look Up New Book</a> - 
-			<a ui-sref="showDatabaseBooks">Show stored books</a> - 
-			<a ui-sref="showJsonData.isbnSelector">Show search results</a>
+			<a ui-sref="showJsonData.isbnSelector">Show search results</a> - 
+			<a ui-sref="showDatabaseBooks">Show stored books</a>
 		</div>
 
 		<!-- load our views -->

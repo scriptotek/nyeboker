@@ -1,7 +1,38 @@
+<!-- show loading spinner if the books are still loading -->
+<loadingspinner ng-show="showDatabaseBooksCtrl.loading"></loadingspinner>
+
+<!-- show error if something went wrong -->
+<errormessage ng-show="showDatabaseBooksCtrl.error">{{showDatabaseBooksCtrl.error}}</errormessage>
+
+<!-- show button for exporting displayed books to webdav if any -->
+<div ng-show="showDatabaseBooksCtrl.booksFromDatabase">
+	<p>
+		Select the books you want shown in vortex below by clicking the "Display" buttons. If they are green, they will be shown. Ready to publish to vortex? Click below.
+	</p> 
+	<button
+		type="button"
+		class="btn btn-success btn-sm"
+		ng-click="showDatabaseBooksCtrl.generateJson()">
+		Publish to vortex
+	</button>
+	<hr>
+</div>
+
 <!-- hide books if the loading variable is set to true -->
-<div class="book" ng-hide="loading" ng-repeat="book in showDatabaseBooksCtrl.booksFromDatabase">
-	<h3>{{ book.title }} <small>av {{ book.author }}</h3>
-	<p>{{ book.desc }}</p>
+<div class="book" ng-hide="showDatabaseBooksCtrl.loading" ng-repeat="book in showDatabaseBooksCtrl.booksFromDatabase">
+	<h3>{{ book.title }} <small>by {{ book.author }}</small></h3>
+	<p>
+		<strong>Category:</strong><br>
+		{{ book.cat }}
+	</p>
+	<p>
+		<strong>Image:</strong><br>
+		<img ng-src="{{ book.image }}" alt="Image can't be found.">
+	</p>
+	<p>
+		<strong>Description:</strong><br>
+		{{ book.desc }}
+	</p>
 
 	<p>
 		<button
@@ -20,6 +51,3 @@
 	</p>
 	
 </div>
-
-<!-- show loading spinner if the books are still loading -->
-<loadingspinner ng-show="showDatabaseBooksCtrl.loading"></loadingspinner>

@@ -200,19 +200,12 @@
     // DatabaseFactory will handle communication with our database
     function DatabaseFactory($http) {
         
-        DatabaseFactory.cachedDatabaseBooks = {};
+        DatabaseFactory.booksFromDatabase = {};
         
         // retrieves books from the database, and calls callback function
         // if successful
         DatabaseFactory.getDatabaseBooks = function(callback) {
-            $http.get('api/books')
-            .success(function(data) {
-                cachedDatabaseBooks = data;
-                callback(data);
-            })
-            .error(function(error) {
-                console.log('Error in getDatabaseBooks.');
-            });
+            return $http.get('api/books');
         };
 
         // save a book (pass in book data)
@@ -237,14 +230,40 @@
         };
 
         // choose to display/not display a book
-        DatabaseFactory.toggleDisplay = function(id, newValue) {
-            console.log('in DatabaseFactory.toggleDisplay');
+        DatabaseFactory.toggleDisplay = function(id) {
 
-            var data = {
-                displayed: newValue
-            };
+            /*
+            we want to do two things here:
+            1) update the displayed value of this book in vm.booksFromDatabase
+               (this should happen automatically by binding when we edit it in
+               DatabaseFactory.booksFromDatabase here)
+            2) update the displayed value of this book in the database itself
+            */
 
-            return DatabaseFactory.update(id, data);
+            // 1)
+            // go through all books and update the displayed value
+            angular.forEach(DatabaseFactory.booksFromDatabase, function(book) {
+
+                if (book.id === id) {
+
+                    if (book.displayed === 0) book.displayed = 1;
+                    else book.displayed = 0;
+
+                    // 2)
+                    var data = {
+                        displayed: book.displayed
+                    };
+                    return DatabaseFactory.update(id, data)
+                    .then(function(data) {
+                        // console.log('result from trying to toggle: ');
+                        // console.log(data.data);
+                        console.log('Display toggled for book id: ' + id);
+                    });
+
+                }
+                
+            });
+
         };
 
         return DatabaseFactory;

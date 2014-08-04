@@ -66,10 +66,14 @@ class BookController extends \BaseController {
 		$book->displayed = Input::get('displayed');
 
 		if ($book->save()) {
-			return Response::json(array('success' => true));
+			return Response::json(array('success' => true, 'newDisplayedValue' => Input::get('displayed')));
 		}
 
-		return Response::json(array('success' => false));
+		// if we haven't already returned, something went wrong
+		return Response::json(array(
+			'code' => 404,
+			'message' => 'Something wen\'t wrong in BookController.update'
+			), 404);
 	}
 
 
