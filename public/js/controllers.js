@@ -42,6 +42,18 @@
 
         });
 
+        vm.categories = [
+            'Matematikk',
+            'Geografi',
+            'Astronomi',
+            'Biologi',
+            'Fysikk',
+            'Kjemi',
+            'Informatikk',
+            'Farmasi'];
+        // set a default value for category
+        vm.selectedCategory = vm.categories[0];
+
         // handler for delete
         vm.deleteBook = function(id) {
             // console.log('Trying to delete id ' + id);
@@ -62,7 +74,9 @@
             // go through each book from the database and add each which has a
             // display === 1 to the holder array
             angular.forEach(vm.booksFromDatabase, function(book) {
-                if (book.displayed === 1) booksToExport.push(book);
+                if (book.displayed === 1 && book.cat === vm.selectedCategory) {
+                    booksToExport.push(book);
+                }
             });
 
             // send bookstoexport to webdav script here

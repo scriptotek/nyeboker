@@ -4,50 +4,101 @@
 <!-- show error if something went wrong -->
 <errormessage ng-show="showDatabaseBooksCtrl.error">{{showDatabaseBooksCtrl.error}}</errormessage>
 
-<!-- show button for exporting displayed books to webdav if any -->
+<!-- show only if we have books -->
 <div ng-show="showDatabaseBooksCtrl.booksFromDatabase">
-	<p>
-		Select the books you want shown in vortex below by clicking the "Display" buttons. If they are green, they will be shown. Ready to publish to vortex? Click below.
-	</p> 
-	<button
-		type="button"
-		class="btn btn-success btn-sm"
-		ng-click="showDatabaseBooksCtrl.generateJson()">
-		Publish to vortex
-	</button>
-	<hr>
-</div>
+	<div class="container">
 
-<!-- hide books if the loading variable is set to true -->
-<div class="book" ng-hide="showDatabaseBooksCtrl.loading" ng-repeat="book in showDatabaseBooksCtrl.booksFromDatabase">
-	<h3>{{ book.title }} <small>by {{ book.author }}</small></h3>
-	<p>
-		<strong>Category:</strong><br>
-		{{ book.cat }}
-	</p>
-	<p>
-		<strong>Image:</strong><br>
-		<img ng-src="{{ book.image }}" alt="Image can't be found.">
-	</p>
-	<p>
-		<strong>Description:</strong><br>
-		{{ book.desc }}
-	</p>
+		<div class="row">
+			<p>
+				Here you can select which books are to be displayed at the different vortex pages. This is how you use this page:
+			</p>
+			<ol>
+				<li>Select your category.</li>
+				<li>Mark the books you want to show in the vortex page by clicking display on them. The ones who are marked will have those buttons in green.</li>
+				<li>Click "Publish" to update the vortex page.</li>
+			</ol>
+		</div>
 
-	<p>
-		<button
-			type="button"
-			class="btn btn-default"
-			ng-class="{buttonSelected: book.displayed}"
-			ng-click="showDatabaseBooksCtrl.toggleDisplay(book.id)">
-			Display
-		</button>
-		<button
-			type="button"
-			class="btn btn-danger"
-			ng-click="showDatabaseBooksCtrl.deleteBook(book.id)">
-			Delete
-		</button>
-	</p>
-	
+		<div class="row" style="margin-top:-10px;">
+			<hr>
+		</div>
+
+		<div class="row">
+			<div class="form-horizontal">
+				<div class="form-group text-left">
+					<div class="col-sm-4 control-label">
+						<select
+							class="form-control"
+							style="margin-top:-10px"
+							name="category"
+							required
+							ng-options="category for category in showDatabaseBooksCtrl.categories"
+							ng-model="showDatabaseBooksCtrl.selectedCategory">
+						</select>
+					</div>
+					<div class="col-sm-1">
+						<button
+							type="button"
+							class="btn btn-success btn-sm"
+							ng-click="showDatabaseBooksCtrl.generateJson()">
+							Publish
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row" style="margin-top:-10px;">
+			<hr>
+		</div>
+
+		<div
+			class="book row"
+			style="margin-top:-10px;margin-bottom:-40px;"
+			ng-repeat="book in showDatabaseBooksCtrl.booksFromDatabase | filter: showDatabaseBooksCtrl.selectedCategory">
+
+			<h3>{{ book.title }} <small>by {{ book.author }}</small></h3>
+
+			<p>
+				<strong>Category:</strong><br>
+				{{ book.cat }}
+			</p>
+
+			<p>
+				<strong>Image:</strong><br>
+				<img ng-src="{{ book.image }}" alt="Image can't be found.">
+			</p>
+
+			<p>
+				<strong>Description:</strong><br>
+				{{ book.desc }}
+			</p>
+
+			<p>
+				<button
+					type="button"
+					class="btn btn-default"
+					ng-class="{'btn-success': book.displayed}"
+					ng-click="showDatabaseBooksCtrl.toggleDisplay(book.id)">
+					Display this book
+				</button>
+				<button
+					type="button"
+					class="btn btn-danger"
+					ng-click="showDatabaseBooksCtrl.deleteBook(book.id)">
+					Delete from database
+				</button>
+			</p>
+
+			<hr>
+
+		</div>
+
+		<div
+			class="row"
+			ng-hide="">
+			
+		</div>
+
+	</div>
 </div>

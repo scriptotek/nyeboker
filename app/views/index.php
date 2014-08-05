@@ -32,8 +32,9 @@
 				white-space: normal;
 			}
 
-			.buttonSelected {
-				background-color: green;
+			.nopadding {
+			   padding: 0 !important;
+			   margin: 0 !important;
 			}
 		</style>
 
