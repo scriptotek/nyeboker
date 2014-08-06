@@ -23,64 +23,23 @@
 
             vm.loading = true;
 
-            /*
-             * The possibilities now:
-             * 
-             * 1) input is valid isbn:
-             *    we send it straight to movingOn with the isbn number
-             * 
-             * 2) input.length == 9 and assumed to be docid/objectid
-             *    we have to find isbn number(s) connected. since we're not
-             *    sure whether we have objectid or docid at this point, we'll
-             *    use IsbnToolsFactory.findObjectId to get the objectid. Then
-             *    we can use IsbnToolsFactory.findISBNs to find isbn numbers
-             *    connected. Then we can use movingOn with the isbn numbers
-             *    we found
-             * 
-             *  3) invalid input. show error somewhere
-            */
+            IsbnToolsFactory.findISBNs2(vm.inputValue, function(data) {
 
-            if (IsbnToolsFactory.isISBN(vm.inputValue)) {
+                // we get some data from katapi (see findISBNSs2). lets save
+                // the data we can use before we move on
 
-                console.log('Input seems to be ISBN. We can proceed to the metadata api.');
-                vm.movingOn([vm.inputValue]);
+                // save the title
+                ApiResultsFactory.cachedJson.title.push(data.title);
 
-            } else if (vm.inputValue.length === 9) {
-
-                console.log('Input seems to be docid/objectid (we don\'t know which). We\'ll try to find an objectid from the input.');
-
-                IsbnToolsFactory.findObjectId(vm.inputValue, function(objektidData) {
-
-                    // did we find an objektid?
-                    if (objektidData.objektid) {
-
-                        console.log('Objektid found: ' +
-                            objektidData.objektid);
-
-                        // now try to find isbn numbers connected
-                        IsbnToolsFactory.findISBNs(objektidData.objektid, function(isbnData) {
-
-                            vm.movingOn(isbnData.isbn);
-
-                        });
-
-                    } else {
-
-                        vm.loading = false;
-                        console.log('Invalid input.');
-                        vm.error = 'Invalid input.';
-
-                    }
-
+                // save authors
+                angular.forEach(data.authors, function(author) {
+                    ApiResultsFactory.cachedJson.authors.push(author.name);
                 });
+                
+                // move on with the isbn
+                vm.movingOn(data.isbns);
 
-            } else {
-
-                vm.loading = false;
-                console.log('Invalid input.');
-                vm.error = 'Invalid input.';
-
-            }
+            });
 
         };
 
@@ -177,9 +136,24 @@
         IsbnToolsFactory.findISBNs = function(inputValue, callback) {
             return $http.get('http://services.biblionaut.net/sru_iteminfo.php?id=' + inputValue)
             .success(function(data) {
+                console.log(data);
                 callback(data);
             })
             .error(function(error) {
+                console.log('Error in IsbnToolsFactory.findISBNs');
+            });
+        };
+
+        /*
+         * 
+         */
+        IsbnToolsFactory.findISBNs2 = function(inputValue, callback) {
+            return $http.get('http://katapi.biblionaut.net/documents/show/' + inputValue + '?format=json')
+            .success(function(data) {
+                console.log(data);
+                callback(data);
+            })
+            .error(function(err) {
                 console.log('Error in IsbnToolsFactory.findISBNs');
             });
         };
