@@ -4,13 +4,76 @@
 
     // define the module that will hold all the factories we're gonna use
     angular.module('bookFactories', []);
-    
+
+
+    // ------------------------------------------------------------------------
+
+    function CategoryHolderFactory() {
+
+        CategoryHolderFactory.localCategories = {
+            '00': '000 Informatikk',
+            '10': '101 Filosofi og psykologi',
+            '30': '300 Samfunnsvitenskap',
+            '50': '500 Generell naturvitenskap',
+            '51': '510 Matematikk',
+            '52': '520 Astronomi',
+            '53': '530 Fysikk',
+            '54': '540 Kjemi',
+            '55': '550 Geovitenskap',
+            '57': '570 Biovitenskap',
+            '58': '580 Planter (Botanikk)',
+            '59': '590 Dyr (Zoologi)',
+            '61': '610 Farmasi (Medisin og helse)',
+            '62': '620 Teknikk',
+            '63': '630 Landbruk',
+            '64': '640 Husholdning',
+            '65': '650 Ledelse og bedriftsøkonomi',
+            '66': '660 Kjemiteknikk',
+            '68': '680 Produksjon med bestemte bruksområder',
+            '70': '700 Kunst',
+            '79': '790 Sport, spill og underholdning',
+            '80': '800 Litteratur, litterær komposisjon og kritikk'
+        };
+
+        CategoryHolderFactory.localCategoryNames = [
+            '000 Informatikk',
+            '101 Filosofi og psykologi',
+            '300 Samfunnsvitenskap',
+            '500 Generell naturvitenskap',
+            '510 Matematikk',
+            '520 Astronomi',
+            '530 Fysikk',
+            '540 Kjemi',
+            '550 Geovitenskap',
+            '570 Biovitenskap',
+            '580 Planter (Botanikk)',
+            '590 Dyr (Zoologi)',
+            '610 Farmasi (Medisin og helse)',
+            '620 Teknikk',
+            '630 Landbruk',
+            '640 Husholdning',
+            '650 Ledelse og bedriftsøkonomi',
+            '660 Kjemiteknikk',
+            '680 Produksjon med bestemte bruksområder',
+            '700 Kunst',
+            '790 Sport, spill og underholdning',
+            '800 Litteratur, litterær komposisjon og kritikk'
+        ];
+
+        return CategoryHolderFactory;
+
+    }
+
+    // add it to our bookFactories module
+    angular
+        .module('bookFactories')
+        .factory('CategoryHolderFactory', CategoryHolderFactory);
 
     // ------------------------------------------------------------------------
 
 
     // IsbnToolsFactory will handle isbn/dokid/objektid lookups and isbn stuff
-    function IsbnToolsFactory($http, ApiResultsFactory) {
+    function IsbnToolsFactory($http, ApiResultsFactory, InformationEditorFactory, CategoryHolderFactory) {
 
         /*
          * Checks user input, gets isbns from the input and then calls
@@ -23,7 +86,7 @@
 
             vm.loading = true;
 
-            IsbnToolsFactory.findISBNs2(vm.inputValue, function(data) {
+            IsbnToolsFactory.findISBNs(vm.inputValue, function(data) {
 
                 // we get some data from katapi (see findISBNSs2). lets save
                 // the data we can use before we move on
@@ -35,9 +98,50 @@
                 angular.forEach(data.authors, function(author) {
                     ApiResultsFactory.cachedJson.authors.push(author.name);
                 });
+
+                // save category
+                // this is a bit tricky. in data.classes we might have this:
+                /*
+classes: [
+    {
+        system: "DDC",
+        number: "539.7215",
+        edition: "23",
+        assigning_agency: "NoOU",
+        uri: "http://katapi.biblionaut.net/classes/DDC/539.7215"
+    }
+]
+                */
+                // and we might have several results. we want the result with
+                // assigning_agency = "NoOU", because that's us. therefore
+                // we'll check all results and see if we find such a result. if
+                // we don't, then we'll just select the category in the first
+                // result. holder variable for the category:
+                var catHolder;
+                // get the values from our assigning_agency
+                var NoOUs = data.classes.filter(function(el, idx, arr) {
+                    return (el.assigning_agency === 'NoOU');
+                });
+                // did we get anything?
+                if (NoOUs) {
+                    // if so, get the first two digits of the number
+                    catHolder = NoOUs[0].number.substring(0,2);
+                } else {
+                    // if we didn't find outselves, just take the first found
+                    catHolder = data.classes[0].number.substring(0,2);
+                }
+                // now we are ready to check these two numbers against the
+                // category names we use locally
+                InformationEditorFactory.info.cat =
+                    CategoryHolderFactory.localCategories[catHolder];
                 
-                // move on with the isbn
-                vm.movingOn(data.isbns);
+                // move on with the isbn if we found a matching category
+                if (InformationEditorFactory.info.cat) {
+                    vm.movingOn(data.isbns);
+                } else {
+                    vm.loading = false;
+                    vm.error = 'There\'s something wrong with the category found. Please try again.';
+                }
 
             });
 
@@ -131,23 +235,9 @@
         };
 
         /*
-         * Will use an objectid to find isbn numbers.
+         * Will use an id (docid, objektic, knyttid) to find isbn numbers.
          */
         IsbnToolsFactory.findISBNs = function(inputValue, callback) {
-            return $http.get('http://services.biblionaut.net/sru_iteminfo.php?id=' + inputValue)
-            .success(function(data) {
-                console.log(data);
-                callback(data);
-            })
-            .error(function(error) {
-                console.log('Error in IsbnToolsFactory.findISBNs');
-            });
-        };
-
-        /*
-         * 
-         */
-        IsbnToolsFactory.findISBNs2 = function(inputValue, callback) {
             return $http.get('http://katapi.biblionaut.net/documents/show/' + inputValue + '?format=json')
             .success(function(data) {
                 console.log(data);
@@ -254,7 +344,7 @@
 
     // InformationEditorFactory will handle the information the user want to
     // move on with after a search
-    function InformationEditorFactory() {
+    function InformationEditorFactory(ApiResultsFactory) {
 
         InformationEditorFactory.info = {
             isbn: '',
@@ -269,6 +359,20 @@
         InformationEditorFactory.setInfo = function(key, value) {
             InformationEditorFactory.info[key] = value;
         };
+
+        // set default values (first results) from ApiResultsFactory
+        InformationEditorFactory.setDefaults = function() {
+            InformationEditorFactory.info.isbn =
+                ApiResultsFactory.cachedJson.isbn[0];
+            InformationEditorFactory.info.image =
+                ApiResultsFactory.cachedJson.medium_image.concat(ApiResultsFactory.cachedJson.small_image).concat(ApiResultsFactory.cachedJson.large_image)[0];
+            InformationEditorFactory.info.title =
+                ApiResultsFactory.cachedJson.title[0];
+            InformationEditorFactory.info.author =
+                ApiResultsFactory.cachedJson.authors[0];
+            InformationEditorFactory.info.desc =
+                ApiResultsFactory.cachedJson.short_desc.concat(ApiResultsFactory.cachedJson.long_desc)[0];
+        }
 
         return InformationEditorFactory;
 
@@ -297,16 +401,7 @@
             url: [],
             authors: [],
             title: [],
-            subtitle: [],
-            categories: [
-                'Matematikk',
-                'Geografi',
-                'Astronomi',
-                'Biologi',
-                'Fysikk',
-                'Kjemi',
-                'Informatikk',
-                'Farmasi']
+            subtitle: []
         };
 
         // this will receive data from the different APIs and store the data
@@ -329,9 +424,11 @@
                 } else {
 
                     // otherwise we want to store this piece of data if we
-                    // haven't already go it
+                    // haven't already got it
                     if (object[key] && ApiResultsFactory.cachedJson[key].indexOf(object[key]) === -1) {
+
                         ApiResultsFactory.cachedJson[key].push(object[key]);
+
                     }
 
                 }

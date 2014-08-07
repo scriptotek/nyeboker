@@ -55,9 +55,9 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'laravel-angular',
-			'username'  => 'root',
-			'password'  => '4289stian',
+			'database'  => 'nyeboker',
+			'username'  => 'nyeboker',
+			'password'  => 'det snør, det snør, tiddelibom',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

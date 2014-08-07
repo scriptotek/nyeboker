@@ -9,7 +9,7 @@
     // ------------------------------------------------------------------------
 
 
-    function showDatabaseBooksCtrl(DatabaseFactory){
+    function showDatabaseBooksCtrl(DatabaseFactory, CategoryHolderFactory){
 
         var vm = this;
 
@@ -42,15 +42,7 @@
 
         });
 
-        vm.categories = [
-            'Matematikk',
-            'Geografi',
-            'Astronomi',
-            'Biologi',
-            'Fysikk',
-            'Kjemi',
-            'Informatikk',
-            'Farmasi'];
+        vm.categories = CategoryHolderFactory.localCategoryNames;
         // set a default value for category
         vm.selectedCategory = vm.categories[0];
 
@@ -68,15 +60,10 @@
         // handler for generating json for webdav->vortex
         vm.generateJson = function() {
 
-            // holder for books to be exported
-            var booksToExport = [];
-
-            // go through each book from the database and add each which has a
-            // display === 1 to the holder array
-            angular.forEach(vm.booksFromDatabase, function(book) {
-                if (book.displayed === 1 && book.cat === vm.selectedCategory) {
-                    booksToExport.push(book);
-                }
+            // only select books with displayed==1 and in this category
+            var booksToExport = vm.booksFromDatabase.filter(function(el, idx, arr) {
+                console.log(el);
+                return el.displayed == 1 && el.cat === vm.selectedCategory;
             });
 
             // send bookstoexport to webdav script here
@@ -113,7 +100,13 @@
             console.log('Proceeding to the metadata api with isbns: ' + isbns);
     
             MetaDataApiFactory.getApiJson(isbns, function() {
-                $state.go('showJsonData.isbnSelector');
+                
+                // set default values
+
+
+                // move on to editor
+                $state.go('showJsonData.informationEditor');
+
             });
 
         };
@@ -322,19 +315,10 @@
 
         var vm = this;
 
-        vm.info = InformationEditorFactory.info;
+        // set default selected values
+        InformationEditorFactory.setDefaults();
 
-        vm.categories = [
-            'Matematikk',
-            'Geografi',
-            'Astronomi',
-            'Biologi',
-            'Fysikk',
-            'Kjemi',
-            'Informatikk',
-            'Farmasi'];
-        // set a default value for category
-        vm.info.cat = vm.categories[0];
+        vm.info = InformationEditorFactory.info;
 
         vm.saveBook = function() {
 

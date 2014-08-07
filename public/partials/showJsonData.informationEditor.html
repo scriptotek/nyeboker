@@ -65,12 +65,13 @@
 		<div class="control-group">
 			<label class="control-label" for="category">Category</label>
 			<div class="controls">
-				<select
+				<input
 					class="form-control"
-					name="category"
+					name="author"
+					type="text"
 					required
-					ng-options="category for category in informationEditorCtrl.categories"
-					ng-model="informationEditorCtrl.info.cat"></select>
+					disabled
+					ng-model="informationEditorCtrl.info.cat">
 			</div>
 		</div>
 
