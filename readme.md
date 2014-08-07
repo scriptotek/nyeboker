@@ -1,1 +1,1 @@
-Remember remember (not the fifth of november) that app/storage and app/config/database.php is gone.
+Script to register new books by scanning isbn/bibsys_id/docid/objectid.
