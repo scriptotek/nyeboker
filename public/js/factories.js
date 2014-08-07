@@ -284,7 +284,7 @@ classes: [
 
         // remove a book from the database
         DatabaseFactory.destroy = function(id) {
-            console.log('in DatabaseFactory.destroy');
+            // console.log('in DatabaseFactory.destroy');
             return $http.delete('api/books/' + id);
         };
 

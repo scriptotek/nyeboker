@@ -9,7 +9,7 @@
     // ------------------------------------------------------------------------
 
 
-    function showDatabaseBooksCtrl(DatabaseFactory, CategoryHolderFactory){
+    function showDatabaseBooksCtrl($state, DatabaseFactory, CategoryHolderFactory){
 
         var vm = this;
 
@@ -20,11 +20,17 @@
         DatabaseFactory.getDatabaseBooks()
         .success(function(data) {
 
-            // store results in this view
-            vm.booksFromDatabase = data;
+            if (data.length) {
 
-            // store results in our factory
-            DatabaseFactory.booksFromDatabase = data;
+                // store results in this view
+                vm.booksFromDatabase = data;
+
+                // store results in our factory
+                DatabaseFactory.booksFromDatabase = data;
+
+            } else {
+                vm.error = 'No books found. Click "Look Up New Book above to search for and add books".';
+            }
 
             // hide loading icon
             vm.loading = false;
@@ -49,7 +55,9 @@
         // handler for delete
         vm.deleteBook = function(id) {
             // console.log('Trying to delete id ' + id);
-            return DatabaseFactory.destroy(id);
+            return DatabaseFactory.destroy(id).success(function() {
+                $state.go('showDatabaseBooks');
+            });
         };
 
         // handler for toggle display
