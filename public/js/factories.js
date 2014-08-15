@@ -104,7 +104,7 @@
                 /*
 classes: [
     {
-        system: "DDC",
+        system: "ddc",
         number: "539.7215",
         edition: "23",
         assigning_agency: "NoOU",
@@ -120,7 +120,7 @@ classes: [
                 var catHolder;
                 // get the values from our assigning_agency
                 var NoOUs = data.classes.filter(function(el, idx, arr) {
-                    return (el.assigning_agency === 'NoOU');
+                    return (el.assigning_agency === 'NoOU' && el.system === 'ddc');
                 });
                 // did we get anything?
                 if (NoOUs) {
