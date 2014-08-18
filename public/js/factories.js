@@ -123,7 +123,7 @@ classes: [
                     return (el.assigning_agency === 'NoOU' && el.system === 'ddc');
                 });
                 // did we get anything?
-                if (NoOUs) {
+                if (NoOUs.length>0) {
                     // if so, get the first two digits of the number
                     catHolder = NoOUs[0].number.substring(0,2);
                 } else {
@@ -240,6 +240,7 @@ classes: [
         IsbnToolsFactory.findISBNs = function(inputValue, callback) {
             return $http.get('http://katapi.biblionaut.net/documents/show/' + inputValue + '?format=json')
             .success(function(data) {
+                console.log('Got data from findISBNs:');
                 console.log(data);
                 callback(data);
             })
