@@ -323,8 +323,10 @@
 
         var vm = this;
 
-        // set default selected values
-        InformationEditorFactory.setDefaults();
+        // set default selected values IF no values are selected
+        if (!InformationEditorFactory.info.isbn) {
+            InformationEditorFactory.setDefaults();
+        }
 
         vm.info = InformationEditorFactory.info;
 
