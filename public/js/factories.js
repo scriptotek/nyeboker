@@ -128,7 +128,10 @@ classes: [
                     catHolder = NoOUs[0].number.substring(0,2);
                 } else {
                     // if we didn't find outselves, just take the first found
-                    catHolder = data.classes[0].number.substring(0,2);
+                    //catHolder = data.classes[0].number.substring(0,2);
+                    vm.loading = false;
+                    vm.error = 'Det ser ikke ut som boka har blitt klassifisert (fant ingen DDC-numre fra UBO). Hvis du nettopp har klassifisert boka kan det hende du må lage deg en kopp te mens du venter på at dataene propagerer. Heldigvis tar det sjelden mange minuttene.';
+                    return;
                 }
                 // now we are ready to check these two numbers against the
                 // category names we use locally
