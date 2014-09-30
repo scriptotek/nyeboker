@@ -127,8 +127,7 @@ classes: [
                     // if so, get the first two digits of the number
                     catHolder = NoOUs[0].number.substring(0,2);
                 } else {
-                    // if we didn't find outselves, just take the first found
-                    //catHolder = data.classes[0].number.substring(0,2);
+                    // Something's not quite right, let's tell the user
                     vm.loading = false;
                     vm.error = 'Det ser ikke ut som boka har blitt klassifisert (fant ingen DDC-numre fra UBO). Hvis du nettopp har klassifisert boka kan det hende du må lage deg en kopp te mens du venter på at dataene propagerer. Heldigvis tar det sjelden mange minuttene.';
                     return;
