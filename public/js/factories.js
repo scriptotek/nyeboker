@@ -240,7 +240,7 @@ classes: [
          * Will use an id (docid, objektic, knyttid) to find isbn numbers.
          */
         IsbnToolsFactory.findISBNs = function(inputValue, callback) {
-            return $http.get('http://katapi.biblionaut.net/documents/show/' + inputValue + '?format=json')
+            return $http.get('http://katapi.biblionaut.net/documents/' + inputValue + '.json')
             .success(function(data) {
                 console.log('Got data from findISBNs:');
                 console.log(data);
