@@ -20,7 +20,7 @@
         DatabaseFactory.getDatabaseBooks()
         .success(function(data) {
 
-            console.log(data.lenght);
+            console.log(data);
 
             if (data.length) {
 
