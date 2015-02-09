@@ -97,67 +97,55 @@
                 } else {
                     console.log("got result");
 
-                    // take the first result
+                    // as a search for an id should only give one result, we only take the first result
                     data = data.documents[0];
+
+
+
                     console.log(data)
                 }
 
 //                 // we get some data from katapi (see findISBNS). lets save
 //                 // the data we can use before we move on
 
-//                 // save the title
-//                 ApiResultsFactory.cachedJson.title.push(data.title);
+                // save the title
+                ApiResultsFactory.cachedJson.title.push(data.bibliographic.title);
 
-//                 // save authors
-//                 angular.forEach(data.authors, function(author) {
-//                     ApiResultsFactory.cachedJson.authors.push(author.name);
-//                 });
+                // save authors
+                angular.forEach(data.bibliographic.creators, function(author) {
+                    ApiResultsFactory.cachedJson.authors.push(author.name);
+                });
 
-//                 // save category
-//                 // this is a bit tricky. in data.classes we might have this:
-//                 /*
-// classes: [
-//     {
-//         system: "ddc",
-//         number: "539.7215",
-//         edition: "23",
-//         assigning_agency: "NoOU",
-//         uri: "http://katapi.biblionaut.net/classes/DDC/539.7215"
-//     }
-// ]
-//                 */
-//                 // and we might have several results. we want the result with
-//                 // assigning_agency = "8", because that's us. therefore
-//                 // we'll check all results and see if we find such a result. if
-//                 // we don't, then we'll just select the category in the first
-//                 // result. holder variable for the category:
-//                 var catHolder;
-//                 // get the values from our assigning_agency
-//                 var NoOUs = data.classes.filter(function(el, idx, arr) {
-//                     return (el.assigning_agency === 'NoOU' && el.system === 'ddc');
-//                 });
-//                 // did we get anything?
-//                 if (NoOUs.length>0) {
-//                     // if so, get the first two digits of the number
-//                     catHolder = NoOUs[0].number.substring(0,2);
-//                 } else {
-//                     // Something's not quite right, let's tell the user
-//                     vm.loading = false;
-//                     vm.error = 'Det ser ikke ut som boka har blitt klassifisert (fant ingen DDC-numre fra UBO). Hvis du nettopp har klassifisert boka kan det hende du må lage deg en kopp te mens du venter på at dataene propagerer. Heldigvis tar det sjelden mange minuttene.';
-//                     return;
-//                 }
-//                 // now we are ready to check these two numbers against the
-//                 // category names we use locally
-//                 InformationEditorFactory.info.cat =
-//                     CategoryHolderFactory.localCategories[catHolder];
+                // save category
+                // this is a bit tricky. in data.classifications we might have several results. we want the result with assigner = "NoOU", because that's us. therefore we'll check all results and see if we find such an assigner. if we don't, then we'll just select the category in the first result. holder variable for the category:
+                var catHolder;
+                // get the values from our assigning_agency
+                var NoOUs = data.classifications.filter(function(el, idx, arr) {
+                    return (el.assigner === 'NoOU' && el.system === 'ddc');
+                });
+                // did we get anything?
+                if (NoOUs.length>0) {
+                    // if so, get the first two digits of the number
+                    catHolder = NoOUs[0].number.substring(0,2);
+                    console.log("found category numbers to be " + catHolder);
+                } else {
+                    // Something's not quite right, let's tell the user
+                    vm.loading = false;
+                    vm.error = 'Det ser ikke ut som boka har blitt klassifisert (fant ingen DDC-numre fra UBO). Hvis du nettopp har klassifisert boka kan det hende du må lage deg en kopp te mens du venter på at dataene propagerer. Heldigvis tar det sjelden mange minuttene.';
+                    return;
+                }
+                // now we are ready to check these two numbers against the
+                // category names we use locally
+                InformationEditorFactory.info.cat =
+                    CategoryHolderFactory.localCategories[catHolder];
                 
-//                 // move on with the isbn if we found a matching category
-//                 if (InformationEditorFactory.info.cat) {
-//                     vm.movingOn(data.isbns);
-//                 } else {
-//                     vm.loading = false;
-//                     vm.error = 'There\'s something wrong with the category found. Please try again.';
-//                 }
+                // move on with the isbn if we found a matching category
+                if (InformationEditorFactory.info.cat) {
+                    vm.movingOn(data.isbns);
+                } else {
+                    vm.loading = false;
+                    vm.error = 'There\'s something wrong with the category found. Please try again.';
+                }
 
             });
 
@@ -332,8 +320,8 @@
         IsbnToolsFactory.findISBNs = function(inputValue, callback) {
             return $http.get('http://katapi.biblionaut.net/documents.json?q=id:' + inputValue)
             .success(function(data) {
-                console.log('Got data from findISBNs:');
-                console.log(data);
+                // console.log('Got data from findISBNs:');
+                // console.log(data);
                 callback(data);
             })
             .error(function(err) {
