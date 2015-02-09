@@ -20,6 +20,8 @@
         DatabaseFactory.getDatabaseBooks()
         .success(function(data) {
 
+            consol.log(data.lenght);
+
             if (data.length) {
 
                 // store results in this view
