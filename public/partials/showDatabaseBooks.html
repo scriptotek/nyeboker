@@ -4,15 +4,6 @@
 <!-- show error if something went wrong -->
 <errormessage ng-show="showDatabaseBooksCtrl.error">{{showDatabaseBooksCtrl.error}}</errormessage>
 
-<!-- show if there are no books in this category -->
-<div ng-hide="showDatabaseBooksCtrl.booksFromDatabase">
-	<div class="container">
-		<div class="row">
-			<p>There are no books in this category (yet).</p>
-		</div>
-	</div>
-</div>
-
 <!-- show only if we have books -->
 <div ng-show="showDatabaseBooksCtrl.booksFromDatabase">
 	<div class="container">
