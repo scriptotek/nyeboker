@@ -21,6 +21,7 @@
         .success(function(data) {
 
             console.log(data.length);
+            console.log(data);
 
             if (data.length) {
 
