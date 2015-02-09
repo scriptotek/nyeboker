@@ -9,7 +9,7 @@
     // ------------------------------------------------------------------------
 
 
-    function showDatabaseBooksCtrl($state, DatabaseFactory, CategoryHolderFactory){
+    function showDatabaseBooksCtrl($http, $state, DatabaseFactory, CategoryHolderFactory){
 
         var vm = this;
 
@@ -80,6 +80,13 @@
 
             // send bookstoexport to webdav script here
             console.log(booksToExport);
+            $http.post('http://localhost/realfagsbiblioteket/dav-test/', booksToExport)
+                .success(function(data){
+                    console.log("data should have been sent successfully");
+                })
+                .error(function(data){
+                    console.log("something went wrong in sending to dav-script");
+                });
         };
 
         return vm;
