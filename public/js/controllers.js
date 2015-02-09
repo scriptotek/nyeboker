@@ -28,6 +28,8 @@
                 // store results in our factory
                 DatabaseFactory.booksFromDatabase = data;
 
+                console.log("test");
+
             } else {
                 vm.error = 'No books found. Click "Look Up New Book above to search for and add books".';
             }
