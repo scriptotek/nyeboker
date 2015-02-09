@@ -132,14 +132,13 @@
                     InformationEditorFactory.info.cat =
                         CategoryHolderFactory.localCategories[catHolder];
 
-                    console.log(data.bibliographic.isbns);                    
-
                     // move on with the isbn if we found a matching category
                     if (InformationEditorFactory.info.cat) {
                         vm.movingOn(data.bibliographic.isbns);
                     } else {
                         vm.loading = false;
-                        vm.error = 'There\'s something wrong with the category found. Please try again.';
+                        vm.error = 'The category found does not match one we have in our own database. Please notify the administrator or this.';
+                        // if we have an error here, we might want to update our categories or change the site so that the user can choose category manually
                     }
 
                 }
