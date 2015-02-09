@@ -75,7 +75,6 @@
 
             // only select books with displayed==1 and in this category
             var booksToExport = vm.booksFromDatabase.filter(function(el, idx, arr) {
-                console.log(el);
                 return el.displayed == 1 && el.cat === vm.selectedCategory;
             });
 

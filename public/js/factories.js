@@ -570,7 +570,7 @@
 
                     // here we have to check if we actually got a result. if we
                     // didn't, then the object would have an error property
-                    // with value 404. we make sure it doesn't nd that it is
+                    // with value 404. we make sure it doesn't, and that it is
                     // an object
                     if (typeof res === 'object' && res.error != '404') {
 
